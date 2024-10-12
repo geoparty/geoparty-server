@@ -36,8 +36,19 @@ dependencies {
 	annotationProcessor 'org.projectlombok:lombok'
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+
+	// 시큐리티
+	implementation 'org.springframework.boot:spring-boot-starter-security'
+
+	//임시 로그인 페이지 구현 thymeleaf
+	implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
 }
 
 tasks.named('test') {
 	useJUnitPlatform()
+}
+
+//빌드 시 -plain.jar는 생성되지 않게 함.
+jar {
+	enabled = false
 }
