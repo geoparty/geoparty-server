@@ -1,9 +1,22 @@
 package com.geoparty.spring_boot.auth.controller;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.geoparty.spring_boot.auth.dto.KakaoTokenDto;
+import com.geoparty.spring_boot.auth.dto.SignInResponse;
+import com.geoparty.spring_boot.auth.service.AuthService;
+import com.geoparty.spring_boot.auth.service.KakaoService;
+import com.geoparty.spring_boot.security.filter.jwt.JwtTokenProvider;
+import jakarta.annotation.Nullable;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+import com.geoparty.spring_boot.auth.vo.Token;
+import com.geoparty.spring_boot.security.filter.jwt.JwtValidationType;
+
+import java.net.URISyntaxException;
+import java.security.Principal;
 
 @Slf4j
 @RestController
@@ -25,8 +38,6 @@ public class AuthController {
         try {
             dto = om.readValue(tokens, KakaoTokenDto.class); // 토큰을 dto로 변환
             socialAccessToken = dto.getToken_type() + " " + dto.getAccess_token(); // 카카오 액세스 토큰 제작
-        } catch (JsonMappingException e) {
-            throw new RuntimeException(e);
         } catch (JsonProcessingException e) {
             throw new RuntimeException(e);
         }

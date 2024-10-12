@@ -2,7 +2,7 @@ package com.geoparty.spring_boot.security.config;
 
 import jakarta.annotation.PostConstruct;
 import lombok.Getter;
-import lombok.Value;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
 
 import java.nio.charset.StandardCharsets;

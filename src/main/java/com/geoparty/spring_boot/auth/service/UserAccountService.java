@@ -1,7 +1,7 @@
 package com.geoparty.spring_boot.auth.service;
 
 import com.geoparty.spring_boot.domain.user.entity.UserAccount;
-import com.geoparty.spring_boot.auth.dto.UserAccountDto;
+import com.geoparty.spring_boot.domain.user.dto.UserAccountDto;
 import com.geoparty.spring_boot.domain.user.repository.UserAccountRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -14,17 +14,13 @@ import java.util.Optional;
 @Service
 public class UserAccountService {
 
-    private final UserAccountRepository userAccountRepository;
+    private final UserAccountRepository userRepository;
 
     @Transactional(readOnly = true)
-    public Optional<UserAccountDto> searchUser(String username) {
-        return userAccountRepository.findById(username)
-                .map(UserAccountDto::from);
-    }
 
-    public UserAccountDto saveUser(String username, String password, String email, String nickname) {
+    public UserAccountDto saveUser(Integer username, String password, String email, String nickname, String userRefreshtoken, boolean userIsWithdraw, String socialId) {
         return UserAccountDto.from(
-                userAccountRepository.save(UserAccount.of(username, password, email, nickname, username))
+                userRepository.save(UserAccount.of(username, password, email, nickname, userRefreshtoken,userIsWithdraw,socialId))
         );
     }
 
