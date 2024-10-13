@@ -36,8 +36,37 @@ dependencies {
 	annotationProcessor 'org.projectlombok:lombok'
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+
+	// 시큐리티
+	implementation 'org.springframework.boot:spring-boot-starter-security'
+
+	//jwt
+	implementation 'io.jsonwebtoken:jjwt-api:0.11.5'
+	implementation 'io.jsonwebtoken:jjwt-impl:0.11.5'
+	implementation 'io.jsonwebtoken:jjwt-jackson:0.11.5'
+
+	//Webflux
+	implementation 'org.springframework.boot:spring-boot-starter-webflux'
+
+	//FeignClient
+	dependencyManagement {
+		imports {
+			mavenBom "org.springframework.cloud:spring-cloud-dependencies:2023.0.1"
+		}
+	}
+	implementation 'org.springframework.cloud:spring-cloud-starter-openfeign'
+
+	implementation 'com.google.code.gson:gson:2.8.9'
+
+	//임시 로그인 페이지 구현 thymeleaf
+	implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
 }
 
 tasks.named('test') {
 	useJUnitPlatform()
+}
+
+//빌드 시 -plain.jar는 생성되지 않게 함.
+jar {
+	enabled = false
 }
