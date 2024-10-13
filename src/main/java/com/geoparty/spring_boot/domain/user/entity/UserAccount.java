@@ -13,18 +13,12 @@ import java.util.Objects;
 
 @Getter
 @ToString(callSuper = true)
-@Table(indexes = {
-        @Index(columnList = "email", unique = true),
-        @Index(columnList = "createdAt"),
-        @Index(columnList = "createdBy")
-})
 @Entity
 public class UserAccount extends AuditingFields {
     @Id
-    @Column(length = 50)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(nullable = false)
     private Integer userId;
-
-    @Setter @Column(nullable = false) private String userPassword;
 
     @Setter @Column(length = 100) private String email;
     @Setter @Column(length = 100) private String nickname;
@@ -42,9 +36,8 @@ public class UserAccount extends AuditingFields {
     protected UserAccount() {}
 
     @Builder
-    private UserAccount(Integer userId, String userPassword, String email, String nickname, String userRefreshtoken, boolean userIsWithdraw, String socialId) {
+    private UserAccount(Integer userId, String email, String nickname, String userRefreshtoken, boolean userIsWithdraw, String socialId) {
         this.userId = userId;
-        this.userPassword = userPassword;
         this.email = email;
         this.nickname = nickname;
         this.userRefreshtoken = userRefreshtoken;
@@ -52,8 +45,8 @@ public class UserAccount extends AuditingFields {
         this.socialId = socialId;
     }
 
-    public static UserAccount of(Integer userId, String userPassword, String email, String nickname, String userRefreshtoken, boolean userIsWithdraw, String socialId) {
-        return new UserAccount(userId, userPassword, email, nickname, userRefreshtoken, userIsWithdraw, socialId);
+    public static UserAccount of(Integer userId, String email, String nickname, String userRefreshtoken, boolean userIsWithdraw, String socialId) {
+        return new UserAccount(userId, email, nickname, userRefreshtoken, userIsWithdraw, socialId);
     }
 
     @Override

@@ -18,9 +18,9 @@ public class UserAccountService {
 
     @Transactional(readOnly = true)
 
-    public UserAccountDto saveUser(Integer username, String password, String email, String nickname, String userRefreshtoken, boolean userIsWithdraw, String socialId) {
+    public UserAccountDto saveUser(Integer username, String email, String nickname, String userRefreshtoken, boolean userIsWithdraw, String socialId) {
         return UserAccountDto.from(
-                userRepository.save(UserAccount.of(username, password, email, nickname, userRefreshtoken,userIsWithdraw,socialId))
+                userRepository.save(UserAccount.of(username, email, nickname, userRefreshtoken,userIsWithdraw,socialId))
         );
     }
 
