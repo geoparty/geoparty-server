@@ -26,7 +26,7 @@ public class AuthController {
     private final AuthService authService;
     private  final KakaoService kakaoService;
     private  final JwtTokenProvider jwtTokenProvider;
-    @GetMapping
+    @PostMapping
     public ResponseEntity<?> signInWithAuthCode(@RequestParam("code") String code) throws URISyntaxException {
         String tokens = kakaoService.getToken(code); // 카카오로 부터 access token, refresh token을 가지고 온다.
         String socialAccessToken; // 액세스 토큰
@@ -84,7 +84,7 @@ public class AuthController {
     }
 
     // refresh token으로 access token 재발급 하기
-    @GetMapping("/refresh")
+    @PostMapping("/refresh")
     public ResponseEntity<?> refresh(@CookieValue(value = "refreshToken") String refreshToken){
         Token token = authService.refresh(refreshToken);
         // refresh-token을 http-only 쿠키로 전송
@@ -95,7 +95,7 @@ public class AuthController {
                 .body(token.getAccessToken()); // body에는 access token을 넣는다.
     }
 
-    @GetMapping("/isLogin")
+    @PostMapping("/isLogin")
     public ResponseEntity<?> isLogin(@CookieValue(value = "refreshToken") String refreshToken){
         if(jwtTokenProvider.validateToken(refreshToken) == JwtValidationType.VALID_JWT){
             return ResponseEntity.ok(true);
