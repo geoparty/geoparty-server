@@ -23,7 +23,7 @@ public class UserAccount extends AuditingFields {
     @Setter @Column(length = 100) private String email;
     @Setter @Column(length = 100) private String nickname;
 
-    @Setter @Column(length = 250) private String userRefreshtoken;
+//    @Setter @Column(length = 250) private String userRefreshtoken;
 
     @Setter @Column(nullable = false)
     @ColumnDefault("false")
@@ -36,17 +36,16 @@ public class UserAccount extends AuditingFields {
     protected UserAccount() {}
 
     @Builder
-    private UserAccount(Integer userId, String email, String nickname, String userRefreshtoken, boolean userIsWithdraw, String socialId) {
+    private UserAccount(Integer userId, String email, String nickname, boolean userIsWithdraw, String socialId) {
         this.userId = userId;
         this.email = email;
         this.nickname = nickname;
-        this.userRefreshtoken = userRefreshtoken;
         this.userIsWithdraw = userIsWithdraw;
         this.socialId = socialId;
     }
 
-    public static UserAccount of(Integer userId, String email, String nickname, String userRefreshtoken, boolean userIsWithdraw, String socialId) {
-        return new UserAccount(userId, email, nickname, userRefreshtoken, userIsWithdraw, socialId);
+    public static UserAccount of(Integer userId, String email, String nickname, boolean userIsWithdraw, String socialId) {
+        return new UserAccount(userId, email, nickname, userIsWithdraw, socialId);
     }
 
     @Override
@@ -56,17 +55,12 @@ public class UserAccount extends AuditingFields {
         return this.getUserId() != null && this.getUserId().equals(that.getUserId());
     }
 
-    @Override
-    public int hashCode() {
-        return Objects.hash(this.getUserId());
-    }
-
-    public void updateRefreshToken(String refreshToken) {
-        this.userRefreshtoken = refreshToken;
-    }
-
-    public void resetRefreshToken() {
-        this.userRefreshtoken = null;
-    }
+//    public void updateRefreshToken(String refreshToken) {
+//        this.userRefreshtoken = refreshToken;
+//    }
+//
+//    public void resetRefreshToken() {
+//        this.userRefreshtoken = null;
+//    }
 
 }

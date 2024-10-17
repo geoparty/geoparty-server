@@ -9,7 +9,6 @@ public record UserAccountDto(
 //        String userPassword,
         String email,
         String nickname,
-        String userRefrashtoken,
         String socialId,
         LocalDateTime createdAt,
 
@@ -17,8 +16,8 @@ public record UserAccountDto(
 
 ) {
 
-    public static UserAccountDto of(Integer userId, String email, String nickname, String userRefrashtoken, String socialId ,LocalDateTime createdAt, LocalDateTime modifiedAt) {
-        return new UserAccountDto(userId, email, nickname, userRefrashtoken, socialId, createdAt, modifiedAt);
+    public static UserAccountDto of(Integer userId, String email, String nickname, String socialId ,LocalDateTime createdAt, LocalDateTime modifiedAt) {
+        return new UserAccountDto(userId, email, nickname, socialId, createdAt, modifiedAt);
     }
 
     public static UserAccountDto from(UserAccount entity) {
@@ -26,7 +25,6 @@ public record UserAccountDto(
                 entity.getUserId(),
                 entity.getEmail(),
                 entity.getNickname(),
-                entity.getUserRefreshtoken(),
                 entity.getSocialId(),
                 entity.getCreatedAt(),
                 entity.getModifiedAt()
