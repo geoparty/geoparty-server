@@ -6,6 +6,7 @@ import com.geoparty.spring_boot.auth.dto.KakaoTokenDto;
 import com.geoparty.spring_boot.auth.dto.SignInResponse;
 import com.geoparty.spring_boot.auth.service.AuthService;
 import com.geoparty.spring_boot.auth.service.KakaoService;
+import com.geoparty.spring_boot.domain.user.dto.UserAccountDto;
 import com.geoparty.spring_boot.security.filter.jwt.JwtTokenProvider;
 import jakarta.annotation.Nullable;
 import lombok.RequiredArgsConstructor;
@@ -26,81 +27,101 @@ public class AuthController {
     private final AuthService authService;
     private  final KakaoService kakaoService;
     private  final JwtTokenProvider jwtTokenProvider;
+
+    // 로그인 혹은 회원가입
+    // 프론트에서 받은 accessToken으로 카카오 서버에서 유저정보 받아서 프론트로 전달
+    // db에 회원 있다면 그대로 전달 or db에 회원 없으면 저장
     @PostMapping
-    public ResponseEntity<?> signInWithAuthCode(@RequestParam("code") String code) throws URISyntaxException {
-        String tokens = kakaoService.getToken(code); // 카카오로 부터 access token, refresh token을 가지고 온다.
-        String socialAccessToken; // 액세스 토큰
-        KakaoTokenDto dto; // 카카오 관련 토큰
-
-        log.info(tokens);
-
-        ObjectMapper om = new ObjectMapper();
-        try {
-            dto = om.readValue(tokens, KakaoTokenDto.class); // 토큰을 dto로 변환
-            socialAccessToken = dto.getToken_type() + " " + dto.getAccess_token(); // 카카오 액세스 토큰 제작
-        } catch (JsonProcessingException e) {
-            throw new RuntimeException(e);
-        }
-
-        // 카카오 엑세스 토큰으로 로그인 진행 -> 우리 서버의 jwt로 만든다.
-        SignInResponse response = authService.signIn(socialAccessToken);
-
-        // refresh-token을 http-only 쿠키로 전송
-        String cookie = authService.createHttpOnlyCookie("refreshToken", response.refreshToken());
-
+    public ResponseEntity<?> signIn(@CookieValue("accessToken") String accessToken) {
+        UserAccountDto response = authService.signUp(accessToken);
         return ResponseEntity.ok()
-                .header("Set-Cookie", cookie)
-                .body(response.accessToken()); // body에는 access token을 넣는다.
+                .header("Authorization", "Bearer " + accessToken)
+                .body(response);
     }
 
-    @PostMapping("/logout")
-    public ResponseEntity<?> signOut(@Nullable Principal principal) {
-        // 액세스 토큰이 있다면
-        if(principal != null){
-            int userId = Integer.parseInt(principal.getName());
-            authService.signOut(userId); // DB내 저장된 리프레시 토큰 삭제
-        }
-
-        // 쿠키 만료 시키기
-        String cookie = authService.setHttpOnlyCookieInvalidate("refreshToken");
-
+    // 엑세스 토큰 갱신시 유저 정보 전달
+    @PostMapping("/userInfo")
+    public ResponseEntity<?> isLogin(@CookieValue(value = "accessToken") String accessToken){
+        UserAccountDto response = authService.getUser(accessToken);
         return ResponseEntity.ok()
-                .header("Set-Cookie", cookie)
-                .body(null);
+                .header("Authorization", "Bearer " + accessToken)
+                .body(response);
     }
+    //    @PostMapping
+//    public ResponseEntity<?> signInWithAuthCode(@RequestParam("code") String code) throws URISyntaxException {
+//        String tokens = kakaoService.getToken(code); // 카카오로 부터 access token, refresh token을 가지고 온다.
+//        String socialAccessToken; // 액세스 토큰
+//        KakaoTokenDto dto; // 카카오 관련 토큰
+//
+//        log.info(tokens);
+//
+//        ObjectMapper om = new ObjectMapper();
+//        try {
+//            dto = om.readValue(tokens, KakaoTokenDto.class); // 토큰을 dto로 변환
+//            socialAccessToken = dto.getToken_type() + " " + dto.getAccess_token(); // 카카오 액세스 토큰 제작
+//        } catch (JsonProcessingException e) {
+//            throw new RuntimeException(e);
+//        }
+//
+//        // 카카오 엑세스 토큰으로 로그인 진행 -> 우리 서버의 jwt로 만든다.
+//        SignInResponse response = authService.signIn(socialAccessToken);
+//
+//        // refresh-token을 http-only 쿠키로 전송
+//        String cookie = authService.createHttpOnlyCookie("refreshToken", response.refreshToken());
+//
+//        return ResponseEntity.ok()
+//                .header("Set-Cookie", cookie)
+//                .body(response.accessToken()); // body에는 access token을 넣는다.
+//    }
 
-    @DeleteMapping
-    public ResponseEntity<?> withdrawal(Principal principal) {
-        // 액세스 토큰이 있다면
-        int userId = Integer.parseInt(principal.getName());
-        authService.withdraw(userId);// DB내 저장된 리프레시 토큰 삭제
-
-        // 쿠키 만료 시키기
-        String cookie = authService.setHttpOnlyCookieInvalidate("refreshToken");
-
-        return ResponseEntity.ok()
-                .header("Set-Cookie", cookie)
-                .body(null);
-    }
-
-    // refresh token으로 access token 재발급 하기
-    @PostMapping("/refresh")
-    public ResponseEntity<?> refresh(@CookieValue(value = "refreshToken") String refreshToken){
-        Token token = authService.refresh(refreshToken);
-        // refresh-token을 http-only 쿠키로 전송
-        String cookie = authService.createHttpOnlyCookie("refreshToken", token.getRefreshToken());
-
-        return ResponseEntity.ok()
-                .header("Set-Cookie", cookie)
-                .body(token.getAccessToken()); // body에는 access token을 넣는다.
-    }
-
-    @PostMapping("/isLogin")
-    public ResponseEntity<?> isLogin(@CookieValue(value = "refreshToken") String refreshToken){
-        if(jwtTokenProvider.validateToken(refreshToken) == JwtValidationType.VALID_JWT){
-            return ResponseEntity.ok(true);
-        }else{
-            return ResponseEntity.ok(false);
-        }
-    }
+// @PostMapping("/logout")
+//    public ResponseEntity<?> signOut(@Nullable Principal principal) {
+//        // 액세스 토큰이 있다면
+//        if(principal != null){
+//            int userId = Integer.parseInt(principal.getName());
+//            authService.signOut(userId); // DB내 저장된 리프레시 토큰 삭제
+//        }
+//
+//        // 쿠키 만료 시키기
+//        String cookie = authService.setHttpOnlyCookieInvalidate("refreshToken");
+//
+//        return ResponseEntity.ok()
+//                .header("Set-Cookie", cookie)
+//                .body(null);
+//    }
+//
+//    @DeleteMapping
+//    public ResponseEntity<?> withdrawal(Principal principal) {
+//        // 액세스 토큰이 있다면
+//        int userId = Integer.parseInt(principal.getName());
+//        authService.withdraw(userId);// DB내 저장된 리프레시 토큰 삭제
+//
+//        // 쿠키 만료 시키기
+//        String cookie = authService.setHttpOnlyCookieInvalidate("refreshToken");
+//
+//        return ResponseEntity.ok()
+//                .header("Set-Cookie", cookie)
+//                .body(null);
+//    }
+//
+//    // refresh token으로 access token 재발급 하기
+//    @PostMapping("/refresh")
+//    public ResponseEntity<?> refresh(@CookieValue(value = "refreshToken") String refreshToken){
+//        Token token = authService.refresh(refreshToken);
+//        // refresh-token을 http-only 쿠키로 전송
+//        String cookie = authService.createHttpOnlyCookie("refreshToken", token.getRefreshToken());
+//
+//        return ResponseEntity.ok()
+//                .header("Set-Cookie", cookie)
+//                .body(token.getAccessToken()); // body에는 access token을 넣는다.
+//    }
+//
+//    @PostMapping("/isLogin")
+//    public ResponseEntity<?> isLogin(@CookieValue(value = "refreshToken") String refreshToken){
+//        if(jwtTokenProvider.validateToken(refreshToken) == JwtValidationType.VALID_JWT){
+//            return ResponseEntity.ok(true);
+//        }else{
+//            return ResponseEntity.ok(false);
+//        }
+//    }
 }
