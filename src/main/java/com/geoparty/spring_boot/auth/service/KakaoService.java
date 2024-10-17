@@ -37,9 +37,10 @@ public class KakaoService {
     @Value(value = "${jwt.security.oauth2.client.registration.kakao.authorization-grant-type}")
     private String grantType;
 
-    public String getToken(String code){
-        return kakaoAuthApi.getAccessToken(clientId,clientSecret,grantType,redirectUri, code).getBody();
-    }
+    // 안드로이드는 이걸 os가 해서 넘겨줌.
+//    public String getToken(String code){
+//        return kakaoAuthApi.getAccessToken(clientId,clientSecret,grantType,redirectUri, code).getBody();
+//    }
 
     public Map<String, String> getKakaoData(String socialAccessToken) {
         try {

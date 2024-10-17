@@ -10,7 +10,7 @@ import org.springframework.context.annotation.Configuration;
 
 @Configuration
 public class OpenApiConfig {
-    private static final String SECURITY_SCHEME_NAME = "authorization";
+    private static final String SECURITY_SCHEME_NAME = "Authorization";
     @Bean
     public OpenAPI swaggerApi() {
         return new OpenAPI()

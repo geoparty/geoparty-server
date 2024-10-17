@@ -1,21 +1,20 @@
 package com.geoparty.spring_boot.auth.controller;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.geoparty.spring_boot.auth.dto.KakaoTokenDto;
+import com.geoparty.spring_boot.auth.dto.AuthReqDto;
 import com.geoparty.spring_boot.auth.dto.SignInResponse;
 import com.geoparty.spring_boot.auth.service.AuthService;
-import com.geoparty.spring_boot.auth.service.KakaoService;
-import com.geoparty.spring_boot.security.filter.jwt.JwtTokenProvider;
-import jakarta.annotation.Nullable;
+import com.geoparty.spring_boot.domain.member.dto.MemberDto;
+import com.geoparty.spring_boot.domain.member.service.MemberService;
+import com.geoparty.spring_boot.global.exception.BaseException;
+import com.geoparty.spring_boot.global.exception.ErrorCode;
+import com.geoparty.spring_boot.security.jwt.JWTUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import com.geoparty.spring_boot.auth.vo.Token;
-import com.geoparty.spring_boot.security.filter.jwt.JwtValidationType;
+import com.geoparty.spring_boot.security.jwt.JWTValType;
 
-import java.net.URISyntaxException;
 import java.security.Principal;
 
 @Slf4j
@@ -24,40 +23,37 @@ import java.security.Principal;
 @RequestMapping("/api/auth")
 public class AuthController {
     private final AuthService authService;
-    private  final KakaoService kakaoService;
-    private  final JwtTokenProvider jwtTokenProvider;
-    @GetMapping
-    public ResponseEntity<?> signInWithAuthCode(@RequestParam("code") String code) throws URISyntaxException {
-        String tokens = kakaoService.getToken(code); // 카카오로 부터 access token, refresh token을 가지고 온다.
-        String socialAccessToken; // 액세스 토큰
-        KakaoTokenDto dto; // 카카오 관련 토큰
+    private  final MemberService memberService;
+    private  final JWTUtil jwtUtil;
+    @PostMapping
+    public ResponseEntity<?> signIn(@RequestBody AuthReqDto accessToken ) {
 
-        log.info(tokens);
+        String socialAccessToken = "Bearer " + accessToken.getAccessToken(); // 카카오 엑세스 토큰
 
-        ObjectMapper om = new ObjectMapper();
-        try {
-            dto = om.readValue(tokens, KakaoTokenDto.class); // 토큰을 dto로 변환
-            socialAccessToken = dto.getToken_type() + " " + dto.getAccess_token(); // 카카오 액세스 토큰 제작
-        } catch (JsonProcessingException e) {
-            throw new RuntimeException(e);
-        }
+        log.info(accessToken.getAccessToken());
 
         // 카카오 엑세스 토큰으로 로그인 진행 -> 우리 서버의 jwt로 만든다.
         SignInResponse response = authService.signIn(socialAccessToken);
 
         // refresh-token을 http-only 쿠키로 전송
-        String cookie = authService.createHttpOnlyCookie("refreshToken", response.refreshToken());
+//        String cookie = authService.createHttpOnlyCookie("refreshToken", response.refreshToken());
 
         return ResponseEntity.ok()
-                .header("Set-Cookie", cookie)
-                .body(response.accessToken()); // body에는 access token을 넣는다.
+                .body(response.accessToken()); // body에는 accessToken,refreshToken,userInfo 전달.
+    }
+
+    @GetMapping("/userInfo")
+    public ResponseEntity<?> getUserInfo(@RequestBody AuthReqDto accessToken ) {
+        MemberDto userData = memberService.getUserInfo(accessToken.getAccessToken());
+        return ResponseEntity.ok()
+                .body(userData);
     }
 
     @PostMapping("/logout")
-    public ResponseEntity<?> signOut(@Nullable Principal principal) {
+    public ResponseEntity<?> signOut(@RequestBody AuthReqDto accessToken) {
         // 액세스 토큰이 있다면
-        if(principal != null){
-            int userId = Integer.parseInt(principal.getName());
+        if(accessToken != null){
+            int userId = jwtUtil.getUserFromJwt(accessToken.getAccessToken());
             authService.signOut(userId); // DB내 저장된 리프레시 토큰 삭제
         }
 
@@ -70,10 +66,13 @@ public class AuthController {
     }
 
     @DeleteMapping
-    public ResponseEntity<?> withdrawal(Principal principal) {
+    public ResponseEntity<?> withdrawal(@RequestBody AuthReqDto accessToken) {
+
         // 액세스 토큰이 있다면
-        int userId = Integer.parseInt(principal.getName());
-        authService.withdraw(userId);// DB내 저장된 리프레시 토큰 삭제
+        if(accessToken != null){
+            int userId = jwtUtil.getUserFromJwt(accessToken.getAccessToken());
+            authService.withdraw(userId);// DB내 저장된 리프레시 토큰 삭제
+        }
 
         // 쿠키 만료 시키기
         String cookie = authService.setHttpOnlyCookieInvalidate("refreshToken");
@@ -83,24 +82,19 @@ public class AuthController {
                 .body(null);
     }
 
-    // refresh token으로 access token 재발급 하기
+    // refresh token으로 refresh token 재발급 하기
     @GetMapping("/refresh")
-    public ResponseEntity<?> refresh(@CookieValue(value = "refreshToken") String refreshToken){
-        Token token = authService.refresh(refreshToken);
-        // refresh-token을 http-only 쿠키로 전송
-        String cookie = authService.createHttpOnlyCookie("refreshToken", token.getRefreshToken());
+    public ResponseEntity<?> isLogin(@RequestBody AuthReqDto accessToken) {
+        String memberToken = accessToken.getAccessToken();
+        // 유효한 엑세스 토큰이라면
+        if (jwtUtil.validateToken(memberToken) == JWTValType.VALID_JWT) {
+            Token token = authService.refresh(memberToken);
 
-        return ResponseEntity.ok()
-                .header("Set-Cookie", cookie)
-                .body(token.getAccessToken()); // body에는 access token을 넣는다.
-    }
-
-    @GetMapping("/isLogin")
-    public ResponseEntity<?> isLogin(@CookieValue(value = "refreshToken") String refreshToken){
-        if(jwtTokenProvider.validateToken(refreshToken) == JwtValidationType.VALID_JWT){
-            return ResponseEntity.ok(true);
-        }else{
-            return ResponseEntity.ok(false);
+            return ResponseEntity.ok()
+                    .body(token); // body에는 새로 발급한 access token, refresh token 넣는다.;
+        } else {
+            // 유효하지 않은 토큰일 경우 401 에러 발생
+            throw new BaseException(ErrorCode.UNAUTHORIZED);
         }
     }
 }

@@ -1,4 +1,4 @@
-package com.geoparty.spring_boot.security.filter.jwt;
+package com.geoparty.spring_boot.security.jwt;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.http.HttpServletRequest;
@@ -15,7 +15,7 @@ import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
 @Component
 @RequiredArgsConstructor
-public class CustomJwtAuthenticationEntryPoint implements AuthenticationEntryPoint {
+public class CustomJWTAuthenticationEntryPoint implements AuthenticationEntryPoint {
 
     private final ObjectMapper objectMapper;
 

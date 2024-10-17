@@ -1,4 +1,4 @@
-package com.geoparty.spring_boot.security.filter.jwt;
+package com.geoparty.spring_boot.security.jwt;
 
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.GrantedAuthority;

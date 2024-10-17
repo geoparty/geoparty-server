@@ -1,7 +1,7 @@
 package com.geoparty.spring_boot.security.config;
 
-import com.geoparty.spring_boot.security.filter.jwt.CustomJwtAuthenticationEntryPoint;
-import com.geoparty.spring_boot.security.filter.jwt.JwtAuthenticationFilter;
+import com.geoparty.spring_boot.security.jwt.CustomJWTAuthenticationEntryPoint;
+import com.geoparty.spring_boot.security.jwt.JWTAuthenticationFilter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -19,8 +19,8 @@ import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 @RequiredArgsConstructor
 public class SecurityConfig {
 
-    private final JwtAuthenticationFilter jwtAuthenticationFilter;
-    private final CustomJwtAuthenticationEntryPoint customJwtAuthenticationEntryPoint;
+    private final JWTAuthenticationFilter jwtAuthenticationFilter;
+    private final CustomJWTAuthenticationEntryPoint customJwtAuthenticationEntryPoint;
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
@@ -46,4 +46,5 @@ public class SecurityConfig {
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)  // Http 요청이 UsernamePasswordAuthenticationFilter 전에 JwtAuthenticationFilter
                 .build();
     }
+
 }

@@ -1,4 +1,4 @@
-package com.geoparty.spring_boot.security.filter.jwt;
+package com.geoparty.spring_boot.security.jwt;
 
 import com.geoparty.spring_boot.security.config.ValueConfig;
 import lombok.RequiredArgsConstructor;
@@ -13,12 +13,11 @@ import io.jsonwebtoken.*;
 import static io.jsonwebtoken.Header.JWT_TYPE;
 import static io.jsonwebtoken.Header.TYPE;
 import static io.jsonwebtoken.security.Keys.hmacShaKeyFor;
-import static com.geoparty.spring_boot.security.filter.jwt.JwtValidationType.*;
 
 @Slf4j
 @Component
 @RequiredArgsConstructor
-public class JwtTokenProvider {
+public class JWTUtil {
 
     private final ValueConfig valueConfig;
 
@@ -49,22 +48,22 @@ public class JwtTokenProvider {
     }
 
     //액세스 토큰을 검증해주는 메서드
-    public JwtValidationType validateToken(String token) {
+    public JWTValType validateToken(String token) {
         try {
             getBody(token);
-            return VALID_JWT;
+            return JWTValType.VALID_JWT;
         } catch (MalformedJwtException exception) {
             log.error(exception.getMessage());
-            return INVALID_JWT_TOKEN;
+            return JWTValType.INVALID_JWT_TOKEN;
         } catch (ExpiredJwtException exception) {
             log.error(exception.getMessage());
-            return EXPIRED_JWT_TOKEN;
+            return JWTValType.EXPIRED_JWT_TOKEN;
         } catch (UnsupportedJwtException exception) {
             log.error(exception.getMessage());
-            return UNSUPPORTED_JWT_TOKEN;
+            return JWTValType.UNSUPPORTED_JWT_TOKEN;
         } catch (IllegalArgumentException exception) {
             log.error(exception.getMessage());
-            return EMPTY_JWT;
+            return JWTValType.EMPTY_JWT;
         }
     }
 
