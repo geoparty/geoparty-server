@@ -1,6 +1,6 @@
-package com.geoparty.spring_boot.security.filter.jwt;
+package com.geoparty.spring_boot.security.jwt;
 
-public enum JwtValidationType {
+public enum JWTValType {
     VALID_JWT,
     INVALID_JWT_SIGNATURE,
     INVALID_JWT_TOKEN,

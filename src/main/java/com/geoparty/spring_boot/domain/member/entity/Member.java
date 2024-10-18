@@ -1,4 +1,4 @@
-package com.geoparty.spring_boot.domain.user.entity;
+package com.geoparty.spring_boot.domain.member.entity;
 
 import com.geoparty.spring_boot.global.domain.AuditingFields;
 import lombok.Builder;
@@ -14,7 +14,7 @@ import java.util.Objects;
 @Getter
 @ToString(callSuper = true)
 @Entity
-public class UserAccount extends AuditingFields {
+public class Member extends AuditingFields {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(nullable = false)
@@ -33,10 +33,10 @@ public class UserAccount extends AuditingFields {
     @Column(nullable = false)
     private String socialId;
 
-    protected UserAccount() {}
+    protected Member() {}
 
     @Builder
-    private UserAccount(Integer userId, String email, String nickname, boolean userIsWithdraw, String socialId) {
+    private Member(Integer userId, String email, String nickname, String userRefreshtoken, boolean userIsWithdraw, String socialId) {
         this.userId = userId;
         this.email = email;
         this.nickname = nickname;
@@ -44,14 +44,14 @@ public class UserAccount extends AuditingFields {
         this.socialId = socialId;
     }
 
-    public static UserAccount of(Integer userId, String email, String nickname, boolean userIsWithdraw, String socialId) {
-        return new UserAccount(userId, email, nickname, userIsWithdraw, socialId);
+    public static Member of(Integer userId, String email, String nickname, String userRefreshtoken, boolean userIsWithdraw, String socialId) {
+        return new Member(userId, email, nickname, userRefreshtoken, userIsWithdraw, socialId);
     }
 
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (!(o instanceof UserAccount that)) return false;
+        if (!(o instanceof Member that)) return false;
         return this.getUserId() != null && this.getUserId().equals(that.getUserId());
     }
 

@@ -1,4 +1,4 @@
-package com.geoparty.spring_boot.security.filter.jwt;
+package com.geoparty.spring_boot.security.jwt;
 
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -20,18 +20,18 @@ import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 @Slf4j
 @Component
 @RequiredArgsConstructor
-public class JwtAuthenticationFilter extends OncePerRequestFilter {
+public class JWTAuthenticationFilter extends OncePerRequestFilter {
 
     private static final String BEARER_HEADER = "Bearer ";
     private static final String BLANK = "";
 
-    private final JwtTokenProvider jwtTokenProvider;
+    private final com.geoparty.spring_boot.security.jwt.JWTUtil JWTUtil;
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         try {
             val token = getAccessTokenFromRequest(request);
-            if (StringUtils.hasText(token) && jwtTokenProvider.validateToken(token) == JwtValidationType.VALID_JWT) { // null 이 아니고 유효하다면
+            if (StringUtils.hasText(token) && JWTUtil.validateToken(token) == JWTValType.VALID_JWT) { // null 이 아니고 유효하다면
                 val authentication = new UserAuthentication(getUserId(token), null, null); // 사용자의 식별자를 추출하지
                 authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request)); //
                 SecurityContextHolder.getContext().setAuthentication(authentication);
@@ -61,6 +61,6 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     // 사용자 아이디
     private int getUserId(String token) {
-        return jwtTokenProvider.getUserFromJwt(token);
+        return JWTUtil.getUserFromJwt(token);
     }
 }
