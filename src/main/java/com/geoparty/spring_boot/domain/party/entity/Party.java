@@ -1,7 +1,7 @@
 package com.geoparty.spring_boot.domain.party.entity;
 
+import com.geoparty.spring_boot.domain.member.entity.Member;
 import com.geoparty.spring_boot.domain.organization.entity.Organization;
-import com.geoparty.spring_boot.domain.user.entity.UserAccount;
 import com.geoparty.spring_boot.global.domain.AuditingFields;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
@@ -33,14 +33,14 @@ public class Party extends AuditingFields {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "host_id", nullable = false)
-    private UserAccount host;
+    private Member host;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "organization_id", nullable = false)
     private Organization organization;
 
     @Builder
-    public Party(String title, String intro, Integer total_point, UserAccount host, Organization organization) {
+    public Party(String title, String intro, Integer total_point, Member host, Organization organization) {
         this.title = title;
         this.intro = intro;
         this.total_point = 0;

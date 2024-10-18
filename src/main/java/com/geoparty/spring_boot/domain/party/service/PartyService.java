@@ -1,5 +1,6 @@
 package com.geoparty.spring_boot.domain.party.service;
 
+import com.geoparty.spring_boot.domain.member.entity.Member;
 import com.geoparty.spring_boot.domain.party.dto.request.PartyRequest;
 import com.geoparty.spring_boot.domain.party.entity.Party;
 import com.geoparty.spring_boot.domain.party.repository.PartyRepository;
@@ -19,10 +20,8 @@ public class PartyService {
     private final PartyRepository partyRepository;
 
     @Transactional
-    public Party createParty(PartyRequest request, UserAccount user) {
+    public void createParty(PartyRequest request, Member user) {
         Party party = request.toEntity();
         partyRepository.save(party);
-
-        return party;
     }
 }

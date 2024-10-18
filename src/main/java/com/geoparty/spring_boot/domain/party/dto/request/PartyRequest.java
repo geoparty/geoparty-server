@@ -1,8 +1,8 @@
 package com.geoparty.spring_boot.domain.party.dto.request;
 
+import com.geoparty.spring_boot.domain.member.entity.Member;
 import com.geoparty.spring_boot.domain.organization.entity.Organization;
 import com.geoparty.spring_boot.domain.party.entity.Party;
-import com.geoparty.spring_boot.domain.user.entity.UserAccount;
 import jakarta.persistence.Column;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.JoinColumn;
@@ -18,7 +18,7 @@ public class PartyRequest {
 
     private String title;
     private String intro;
-    private UserAccount host;
+    private Member host;
     private Organization organization;
 
     public Party toEntity() {
