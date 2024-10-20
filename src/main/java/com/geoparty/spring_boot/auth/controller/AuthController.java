@@ -4,7 +4,7 @@ import com.geoparty.spring_boot.auth.dto.AuthReqDto;
 import com.geoparty.spring_boot.auth.dto.SignInResponse;
 import com.geoparty.spring_boot.auth.service.AuthService;
 import com.geoparty.spring_boot.domain.member.dto.MemberDto;
-import com.geoparty.spring_boot.domain.member.service.MemberService;
+import com.geoparty.spring_boot.domain.member.service.MemberServiceImpl;
 import com.geoparty.spring_boot.global.exception.BaseException;
 import com.geoparty.spring_boot.global.exception.ErrorCode;
 import com.geoparty.spring_boot.security.jwt.JWTUtil;
@@ -15,15 +15,13 @@ import org.springframework.web.bind.annotation.*;
 import com.geoparty.spring_boot.auth.vo.Token;
 import com.geoparty.spring_boot.security.jwt.JWTValType;
 
-import java.security.Principal;
-
 @Slf4j
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/auth")
 public class AuthController {
     private final AuthService authService;
-    private  final MemberService memberService;
+    private  final MemberServiceImpl memberService;
     private  final JWTUtil jwtUtil;
     @PostMapping
     public ResponseEntity<?> signIn(@RequestBody AuthReqDto accessToken ) {
@@ -34,9 +32,6 @@ public class AuthController {
 
         // 카카오 엑세스 토큰으로 로그인 진행 -> 우리 서버의 jwt로 만든다.
         SignInResponse response = authService.signIn(socialAccessToken);
-
-        // refresh-token을 http-only 쿠키로 전송
-//        String cookie = authService.createHttpOnlyCookie("refreshToken", response.refreshToken());
 
         return ResponseEntity.ok()
                 .body(response.accessToken()); // body에는 accessToken,refreshToken,userInfo 전달.
@@ -61,35 +56,9 @@ public class AuthController {
         String cookie = authService.setHttpOnlyCookieInvalidate("refreshToken");
 
         return ResponseEntity.ok()
-                .header("Authorization", "Bearer " + accessToken)
-                .body(response);
+                .header("Set-Cookie" , cookie)
+                .build();
     }
-    //    @PostMapping
-//    public ResponseEntity<?> signInWithAuthCode(@RequestParam("code") String code) throws URISyntaxException {
-//        String tokens = kakaoService.getToken(code); // 카카오로 부터 access token, refresh token을 가지고 온다.
-//        String socialAccessToken; // 액세스 토큰
-//        KakaoTokenDto dto; // 카카오 관련 토큰
-//
-//        log.info(tokens);
-//
-//        ObjectMapper om = new ObjectMapper();
-//        try {
-//            dto = om.readValue(tokens, KakaoTokenDto.class); // 토큰을 dto로 변환
-//            socialAccessToken = dto.getToken_type() + " " + dto.getAccess_token(); // 카카오 액세스 토큰 제작
-//        } catch (JsonProcessingException e) {
-//            throw new RuntimeException(e);
-//        }
-//
-//        // 카카오 엑세스 토큰으로 로그인 진행 -> 우리 서버의 jwt로 만든다.
-//        SignInResponse response = authService.signIn(socialAccessToken);
-//
-//        // refresh-token을 http-only 쿠키로 전송
-//        String cookie = authService.createHttpOnlyCookie("refreshToken", response.refreshToken());
-//
-//        return ResponseEntity.ok()
-//                .header("Set-Cookie", cookie)
-//                .body(response.accessToken()); // body에는 access token을 넣는다.
-//    }
 
     @DeleteMapping
     public ResponseEntity<?> withdrawal(@RequestBody AuthReqDto accessToken) {

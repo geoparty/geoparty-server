@@ -33,12 +33,12 @@ public class AuthService {
 
 
     //회원 가입 - 이미 있다면 찾은거 반환
-    private Member signUp(KakaoUserData userData) {
+    private MemberDto signUp(KakaoUserData userData) {
         String socialId = userData.getSocialId();
         Member user = memberRepository.findBySocialId(socialId)
                 .orElseGet(() -> saveUser(userData));
         user.setUserIsWithdraw(false); // 재가입 한 사람 다시 살려내기
-        UserAccountDto userInfo = UserAccountDto.from(user);
+        MemberDto userInfo = MemberDto.from(user);
         return userInfo;
     }
 
@@ -54,9 +54,9 @@ public class AuthService {
     // 유저 정보 가져오기
     private Member getUser(String socialAccessToken) {
         KakaoUserData userData = getUserData(socialAccessToken);
-        UserAccount user = userRepository.findBySocialId(userData.getSocialId())
+        Member user = memberRepository.findBySocialId(userData.getSocialId())
                 .orElseThrow(() -> new BaseException(ErrorCode.NOT_FOUND_DATA));
-        return UserAccountDto.from(user);
+        return user;
     }
 
     // 유저 정보 카카오에서 받아오기

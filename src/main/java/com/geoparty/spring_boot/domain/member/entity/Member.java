@@ -23,7 +23,7 @@ public class Member extends AuditingFields {
     @Setter @Column(length = 100) private String email;
     @Setter @Column(length = 100) private String nickname;
 
-//    @Setter @Column(length = 250) private String userRefreshtoken;
+    @Setter @Column(length = 250) private String userRefreshtoken;
 
     @Setter @Column(nullable = false)
     @ColumnDefault("false")
@@ -40,6 +40,7 @@ public class Member extends AuditingFields {
         this.userId = userId;
         this.email = email;
         this.nickname = nickname;
+        this.userRefreshtoken = userRefreshtoken;
         this.userIsWithdraw = userIsWithdraw;
         this.socialId = socialId;
     }
@@ -55,12 +56,12 @@ public class Member extends AuditingFields {
         return this.getUserId() != null && this.getUserId().equals(that.getUserId());
     }
 
-//    public void updateRefreshToken(String refreshToken) {
-//        this.userRefreshtoken = refreshToken;
-//    }
-//
-//    public void resetRefreshToken() {
-//        this.userRefreshtoken = null;
-//    }
+    public void updateRefreshToken(String refreshToken) {
+        this.userRefreshtoken = refreshToken;
+    }
+
+    public void resetRefreshToken() {
+        this.userRefreshtoken = null;
+    }
 
 }

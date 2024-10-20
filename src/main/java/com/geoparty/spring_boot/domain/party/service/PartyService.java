@@ -4,7 +4,7 @@ import com.geoparty.spring_boot.domain.member.entity.Member;
 import com.geoparty.spring_boot.domain.party.dto.request.PartyRequest;
 import com.geoparty.spring_boot.domain.party.entity.Party;
 import com.geoparty.spring_boot.domain.party.repository.PartyRepository;
-import com.geoparty.spring_boot.domain.user.entity.UserAccount;
+import com.geoparty.spring_boot.domain.member.entity.Member;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
