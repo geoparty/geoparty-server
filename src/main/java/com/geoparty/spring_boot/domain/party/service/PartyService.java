@@ -52,9 +52,9 @@ public class PartyService {
 
     public List<PartyResponse> getParties(Member loginMember) {
 //        validMember(loginMember);
-        List<Party> parties = userPartyRepository.findPartiesByUserId(loginMember.getUserId());
+        List<UserParty> parties = userPartyRepository.findUserPartiesByMember(loginMember);
         return parties.stream()
-                .map(party -> PartyResponse.from(party))
+                .map(userParty -> PartyResponse.from(userParty.getParty()))
                 .collect(Collectors.toList());
     }
 }

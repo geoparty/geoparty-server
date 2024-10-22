@@ -17,7 +17,7 @@ import java.util.Objects;
 public class Member extends AuditingFields {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(nullable = false)
+    @Column(nullable = false, name = "user_id")
     private Integer userId;
 
     @Setter @Column(length = 100) private String email;
