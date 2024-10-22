@@ -17,6 +17,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -30,7 +31,6 @@ public class PartyService {
     @Transactional
     public void createParty(PartyRequest request, Member user) {
 //        validMember(user);
-
         String imgUrl = "환경 단체 이미지 url"; // to-do: 환경 단체 이미지 url로 변경
         Party party = request.toEntity(imgUrl, user);
         partyRepository.save(party);
@@ -50,9 +50,11 @@ public class PartyService {
         userPartyRepository.save(userParty);
     }
 
-//    public PartyResponse getParty(Member loginMember) {
-////        validMember(loginMember);
-//        List<Party> parties = partyRepository.findEmailsByProjectId(projectId);
-//        return ProjectResponse.from(emails);
-//    }
+    public List<PartyResponse> getParties(Member loginMember) {
+//        validMember(loginMember);
+        List<Party> parties = userPartyRepository.findPartiesByUserId(loginMember.getUserId());
+        return parties.stream()
+                .map(party -> PartyResponse.from(party))
+                .collect(Collectors.toList());
+    }
 }
