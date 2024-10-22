@@ -11,6 +11,8 @@ import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
 
+import static com.geoparty.spring_boot.domain.party.entity.PartyType.PENDING;
+
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -26,10 +28,23 @@ public class Party extends AuditingFields {
     @Column(nullable = false)
     private String intro;
 
-    private LocalDateTime pay_date;
+    private String imgUrl;
+
+    private LocalDateTime payDate;
 
     @Column(nullable = false)
-    private Integer total_point;
+    private Integer totalPoint; // 실제 모인 금액
+
+    @Column(nullable = false)
+    private Integer targetPoint; // 실제 모인 금액
+
+    @Column(nullable = false)
+    private Integer pointPerPerson;
+
+    private Integer duration;
+
+    @Enumerated(EnumType.STRING)
+    private PartyType status;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "host_id", nullable = false)
@@ -40,10 +55,16 @@ public class Party extends AuditingFields {
     private Organization organization;
 
     @Builder
-    public Party(String title, String intro, Integer total_point, Member host, Organization organization) {
+
+    public Party(String title, String intro, String imgUrl, Integer totalPoint, Integer targetPoint, Integer pointPerPerson, Integer duration, PartyType status, Member host, Organization organization) {
         this.title = title;
         this.intro = intro;
-        this.total_point = 0;
+        this.imgUrl = imgUrl;
+        this.totalPoint = 0;
+        this.targetPoint = targetPoint;
+        this.pointPerPerson = pointPerPerson;
+        this.duration = 0;
+        this.status = PENDING;
         this.host = host;
         this.organization = organization;
     }
