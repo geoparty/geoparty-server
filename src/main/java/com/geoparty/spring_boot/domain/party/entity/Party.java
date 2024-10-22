@@ -36,12 +36,12 @@ public class Party extends AuditingFields {
     private Integer totalPoint; // 실제 모인 금액
 
     @Column(nullable = false)
-    private Integer targetPoint; // 실제 모인 금액
+    private Integer targetPoint; // 목표 금액
 
     @Column(nullable = false)
-    private Integer pointPerPerson;
+    private Integer pointPerPerson; // 1인당 후원 금액
 
-    private Integer duration;
+    private Integer duration; // 결제 지속 금액
 
     @Enumerated(EnumType.STRING)
     private PartyType status;
@@ -55,7 +55,6 @@ public class Party extends AuditingFields {
     private Organization organization;
 
     @Builder
-
     public Party(String title, String intro, String imgUrl, Integer totalPoint, Integer targetPoint, Integer pointPerPerson, Integer duration, PartyType status, Member host, Organization organization) {
         this.title = title;
         this.intro = intro;
