@@ -32,17 +32,7 @@ public class AuthService {
     private final KakaoService kakaoService;
 
 
-    //회원 가입 - 이미 있다면 찾은거 반환
-    private MemberDto signUp(KakaoUserData userData) {
-        String socialId = userData.getSocialId();
-        Member user = memberRepository.findBySocialId(socialId)
-                .orElseGet(() -> saveUser(userData));
-        user.setUserIsWithdraw(false); // 재가입 한 사람 다시 살려내기
-        MemberDto userInfo = MemberDto.from(user);
-        return userInfo;
-    }
-
-    // 로그인 - > 유저 정보 가져오기 -> 유저 정보 없다면 회원가입 시키고 데이터 반환
+    // 로그인(유저 정보 없다면 db에 저장하고 데이터 반환)
     @Transactional
     public SignInResponse signIn(String socialAccessToken) { // 액세스 토큰
         Member user = getUser(socialAccessToken); // 액세스 토큰의  유저 찾기
@@ -50,13 +40,11 @@ public class AuthService {
         return SignInResponse.of(token, MemberDto.from(user));
     }
 
-
-    // 유저 정보 가져오기
+    // 유저 정보 없으면 저장 후 리턴
     private Member getUser(String socialAccessToken) {
         KakaoUserData userData = getUserData(socialAccessToken);
-        Member user = memberRepository.findBySocialId(userData.getSocialId())
-                .orElseThrow(() -> new BaseException(ErrorCode.NOT_FOUND_DATA));
-        return user;
+        return memberRepository.findBySocialId(userData.getSocialId())
+                .orElseGet(() -> saveUser(userData));
     }
 
     // 유저 정보 카카오에서 받아오기

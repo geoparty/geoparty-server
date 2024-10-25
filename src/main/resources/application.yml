@@ -38,5 +38,6 @@ jwt:
             scope:
               - profile
               - account_email
+              - profile_image
 
 

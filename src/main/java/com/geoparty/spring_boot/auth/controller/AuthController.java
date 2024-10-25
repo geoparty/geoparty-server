@@ -3,6 +3,7 @@ package com.geoparty.spring_boot.auth.controller;
 import com.geoparty.spring_boot.auth.dto.AuthReqDto;
 import com.geoparty.spring_boot.auth.dto.SignInResponse;
 import com.geoparty.spring_boot.auth.service.AuthService;
+import com.geoparty.spring_boot.auth.service.KakaoService;
 import com.geoparty.spring_boot.domain.member.dto.MemberDto;
 import com.geoparty.spring_boot.domain.member.service.MemberServiceImpl;
 import com.geoparty.spring_boot.global.exception.BaseException;
@@ -23,12 +24,16 @@ public class AuthController {
     private final AuthService authService;
     private  final MemberServiceImpl memberService;
     private  final JWTUtil jwtUtil;
+    private final KakaoService kakaoService;
+    @CrossOrigin(origins = "*")
     @PostMapping
     public ResponseEntity<?> signIn(@RequestBody AuthReqDto accessToken ) {
 
-        String socialAccessToken = "Bearer " + accessToken.getAccessToken(); // 카카오 엑세스 토큰
+        String socialAccessToken = "Bearer " + accessToken.getAccessToken();// 카카오 엑세스 토큰
 
         log.info(accessToken.getAccessToken());
+        //유저정보를 받아서 db에 저장
+
 
         // 카카오 엑세스 토큰으로 로그인 진행 -> 우리 서버의 jwt로 만든다.
         SignInResponse response = authService.signIn(socialAccessToken);
