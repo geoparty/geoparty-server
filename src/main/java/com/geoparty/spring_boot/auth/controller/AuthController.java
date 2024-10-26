@@ -1,6 +1,10 @@
 package com.geoparty.spring_boot.auth.controller;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonMappingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.geoparty.spring_boot.auth.dto.AuthReqDto;
+import com.geoparty.spring_boot.auth.dto.KakaoTokenDto;
 import com.geoparty.spring_boot.auth.dto.SignInResponse;
 import com.geoparty.spring_boot.auth.service.AuthService;
 import com.geoparty.spring_boot.auth.service.KakaoService;
@@ -16,6 +20,8 @@ import org.springframework.web.bind.annotation.*;
 import com.geoparty.spring_boot.auth.vo.Token;
 import com.geoparty.spring_boot.security.jwt.JWTValType;
 
+import java.net.URISyntaxException;
+
 @Slf4j
 @RestController
 @RequiredArgsConstructor
@@ -25,6 +31,35 @@ public class AuthController {
     private  final MemberServiceImpl memberService;
     private  final JWTUtil jwtUtil;
     private final KakaoService kakaoService;
+//
+//    @GetMapping
+//    public ResponseEntity<?> dummy(@RequestParam("code") String code) throws URISyntaxException {
+//        String tokens = kakaoService.getToken(code); // 카카오로 부터 access token, refresh token을 가지고 온다.
+//        String socialAccessToken; // 액세스 토큰
+//        KakaoTokenDto dto; // 카카오 관련 토큰
+//
+//        log.info(tokens);
+//
+//        ObjectMapper om = new ObjectMapper();
+//        try {
+//            dto = om.readValue(tokens, KakaoTokenDto.class); // 토큰을 dto로 변환
+//            socialAccessToken = dto.getToken_type() + " " + dto.getAccess_token(); // 카카오 액세스 토큰 제작
+//        } catch (JsonMappingException e) {
+//            throw new RuntimeException(e);
+//        } catch (JsonProcessingException e) {
+//            throw new RuntimeException(e);
+//        }
+//        // 카카오 엑세스 토큰으로 로그인 진행 -> 우리 서버의 jwt로 만든다.
+//        SignInResponse response = authService.signIn(socialAccessToken);
+//
+//        // refresh-token을 http-only 쿠키로 전송
+//        String cookie = authService.createHttpOnlyCookie("refreshToken", response.refreshToken());
+//
+//        return ResponseEntity.ok()
+//                .header("Set-Cookie", cookie)
+//                .body(response.accessToken()); // body에는 access token을 넣는다.
+//    }
+
     @CrossOrigin(origins = "*")
     @PostMapping
     public ResponseEntity<?> signIn(@RequestBody AuthReqDto accessToken ) {

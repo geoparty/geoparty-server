@@ -34,7 +34,7 @@ public class AuthService {
 
     // 로그인(유저 정보 없다면 db에 저장하고 데이터 반환)
     @Transactional
-    public SignInResponse signIn(String socialAccessToken) { // 액세스 토큰
+    public SignInResponse signIn(String socialAccessToken) { // 카카오 액세스 토큰
         Member user = getUser(socialAccessToken); // 액세스 토큰의  유저 찾기
         Token token = getToken(user);
         return SignInResponse.of(token, MemberDto.from(user));
