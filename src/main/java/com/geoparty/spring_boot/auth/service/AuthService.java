@@ -11,6 +11,7 @@ import com.geoparty.spring_boot.global.exception.ErrorCode;
 import com.geoparty.spring_boot.security.jwt.JWTUtil;
 import com.geoparty.spring_boot.security.jwt.UserAuthentication;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseCookie;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
@@ -19,7 +20,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.Objects;
 
 import static com.geoparty.spring_boot.security.jwt.JWTValType.VALID_JWT;
-
+@Slf4j
 @Service
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
@@ -137,9 +138,10 @@ public class AuthService {
 
     // access token으로 access token, refresh token 재발급하는 메소드
     @Transactional
-    public Token refresh(String accessToken) {
-
-        Integer userId = JWTUtil.getUserFromJwt(accessToken); //  유저 id 추출
+    public Token refresh(String refreshToken) {
+        log.info("hello");
+        Integer userId = JWTUtil.getUserFromJwt(refreshToken); //  유저 id 추출
+        log.info("where?");
         Member user = memberRepository.findUserByUserId(userId)
                 .orElseThrow(() -> new BaseException(ErrorCode.UNAUTHORIZED)); //유저 정보 추출
         String realRefreshToken = user.getUserRefreshtoken(); // 저장된 refreshToken 가지고 오기
