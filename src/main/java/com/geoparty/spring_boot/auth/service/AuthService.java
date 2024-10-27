@@ -68,9 +68,9 @@ public class AuthService {
     }
 
     // 사용자 정보를 통해  refreshToken을 User에 저장하고 jwt Token을 반환
-    private Token getToken(Member user) {
-        Token token = generateToken(new UserAuthentication(user.getUserId(), null, null)); // jwt 토큰 생성
-        user.updateRefreshToken(token.getRefreshToken()); // 우리 서버의 jwt 토큰을 저장
+    private Token getToken(Member member) {
+        Token token = generateToken(new UserAuthentication(member.getMemberId(), null, null)); // jwt 토큰 생성
+        member.updateRefreshToken(token.getRefreshToken()); // 우리 서버의 jwt 토큰을 저장
         return token; // 토큰 반환
     }
 

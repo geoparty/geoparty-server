@@ -12,6 +12,7 @@ import com.geoparty.spring_boot.security.jwt.JWTUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import com.geoparty.spring_boot.auth.vo.Token;
 import com.geoparty.spring_boot.security.jwt.JWTValType;
@@ -23,7 +24,6 @@ import com.geoparty.spring_boot.security.jwt.JWTValType;
 @RequestMapping("/api/auth")
 public class AuthController {
     private final AuthService authService;
-    private  final MemberServiceImpl memberService;
     private  final JWTUtil jwtUtil;
 
     @CrossOrigin(origins = "*")
@@ -43,13 +43,13 @@ public class AuthController {
     }
 
     @GetMapping("/userInfo")
-    public ResponseEntity<?> getUserInfo(@RequestHeader("Authorization") String authorizationHeader ) {
+    public ResponseEntity<?> getUserInfo(@AuthenticationPrincipal MemberDto member) {
         // "Bearer " 부분 제거하고 순수한 토큰 값만 추출
-        String accessToken = authorizationHeader.replace("Bearer ", "");
-
-        MemberDto userData = memberService.getUserInfo(accessToken);
+//        String accessToken = authorizationHeader.replace("Bearer ", "");
+//
+//        MemberDto userData = memberService.getUserInfo(accessToken);
         return ResponseEntity.ok()
-                .body(userData);
+                .body(member);
     }
 
     //    @GetMapping
@@ -60,15 +60,15 @@ public class AuthController {
     //    }
 
     @PostMapping("/logout")
-    public ResponseEntity<?> signOut(@RequestHeader("Authorization") String authorizationHeader) {
+    public ResponseEntity<?> signOut(@AuthenticationPrincipal MemberDto member) {
 
         // "Bearer " 부분 제거하고 토큰 값만 추출
-        String accessToken = authorizationHeader.replace("Bearer ", "");
+        // String accessToken = authorizationHeader.replace("Bearer ", "");
 
         // 액세스 토큰이 있다면
-        if(accessToken != null){
-            int userId = jwtUtil.getUserFromJwt(accessToken);
-            authService.signOut(userId); // DB내 저장된 리프레시 토큰 삭제
+        if(member != null){
+            Integer memberId = member.getMemberId();
+            authService.signOut(memberId);
         }
 
         // 쿠키 만료 시키기
@@ -80,15 +80,13 @@ public class AuthController {
     }
 
     @DeleteMapping
-    public ResponseEntity<?> withdrawal(@RequestHeader("Authorization") String authorizationHeader) {
+    public ResponseEntity<?> withdrawal(@AuthenticationPrincipal MemberDto member) {
 
-        // "Bearer " 부분 제거하고 토큰 값만 추출
-        String accessToken = authorizationHeader.replace("Bearer ", "");
 
         // 액세스 토큰이 있다면
-        if(accessToken != null){
-            int userId = jwtUtil.getUserFromJwt(accessToken);
-            authService.withdraw(userId);// DB내 저장된 리프레시 토큰 삭제
+        if(member != null){
+            Integer memberId = member.getMemberId();
+            authService.withdraw(memberId);//
         }
 
         // 쿠키 만료 시키기
