@@ -18,6 +18,7 @@ public class OrgRequest {
     private Integer minDonation;
     private MultipartFile thumbnail; // 대표 이미지
     private List<MultipartFile> detailedPhotos; // 여러 개의 상세 이미지
+    private MultipartFile pdffile; // 단체 상세 pdf
 
     public Organization toEntity(String thumbnail) {
         return Organization.builder()

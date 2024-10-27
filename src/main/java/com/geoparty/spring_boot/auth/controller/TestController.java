@@ -15,10 +15,10 @@ import java.io.IOException;
 @RequiredArgsConstructor
 @RequestMapping("/api/auth/s3")
 public class TestController {
-
-    @PostMapping
-    public ResponseEntity<?> test(@RequestBody S3Test request) throws IOException {
-
-        return ResponseEntity.ok().build();
-    }
+//
+//    @PostMapping
+//    public ResponseEntity<?> test(@RequestBody) throws IOException {
+//
+//        return ResponseEntity.ok().build();
+//    }
 }

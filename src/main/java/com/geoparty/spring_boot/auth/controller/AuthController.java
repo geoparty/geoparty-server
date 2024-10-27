@@ -52,6 +52,13 @@ public class AuthController {
                 .body(userData);
     }
 
+    //    @GetMapping
+    //    public ResponseEntity<?> getOrganization(HttpServletRequest request) {
+    //        Integer userId = jwtUtil.getMemberId(request)
+    //                .orElseThrow(() -> new BaseException(ErrorCode.INVALID_TOKEN));// 헤더의 access token으로 userId 추출, null 반환시 유효하지 않은 토큰 오류 전송
+    //        return ResponseEntity.status(HttpStatus.OK);
+    //    }
+
     @PostMapping("/logout")
     public ResponseEntity<?> signOut(@RequestHeader("Authorization") String authorizationHeader) {
 
