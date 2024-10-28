@@ -34,10 +34,16 @@ public class PartyService {
     @Transactional
     public void createParty(PartyRequest request, Member user) {
 //        validMember(user);
-        String imgUrl = "환경 단체 이미지 url"; // to-do: 환경 단체 이미지 url로 변경
-        Party party = request.toEntity(imgUrl, user);
+        Party party = request.toEntity(user, countPartyMembers(request.getTargetPoint(), request.getPointPerPerson()));
         partyRepository.save(party);
         createUserParty(user, party);
+    }
+
+    public Integer countPartyMembers(Integer targetPoint, Integer pointPerPerson){
+        if (pointPerPerson == 0) {
+            throw new IllegalArgumentException("1인당 후원 금액은 0이 될 수 없습니다.");
+        }
+        return (int) Math.ceil((double) targetPoint / pointPerPerson);
     }
 
     public void validMember(Member member){

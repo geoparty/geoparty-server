@@ -16,20 +16,19 @@ public class PartyRequest {
 
     private String title;
     private String intro;
-    private String imgUrl;
-    private Organization organization;
     private Integer targetPoint;
     private Integer pointPerPerson;
+    private Organization organization;
 
-    public Party toEntity(String imgUrl, Member member) {
+    public Party toEntity(Member member, Integer count) {
         return Party.builder()
+                .host(member)
                 .title(title)
                 .intro(intro)
-                .imgUrl(imgUrl)
-                .host(member)
-                .organization(organization)
                 .targetPoint(targetPoint)
                 .pointPerPerson(pointPerPerson)
+                .count(count)
+                .organization(organization)
                 .build();
     }
 }
