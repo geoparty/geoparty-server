@@ -28,7 +28,7 @@ public class PartyController {
         return ResponseEntity.status(HttpStatus.CREATED).body("파티 생성이 완료되었습니다.");
     }
 
-    @GetMapping
+    @GetMapping("/home")
     @Operation(description = "홈화면에서 로그인한 유저의 파티 리스트를 반환한다.") // to-do: 로그인한 유저 정보 반환하기
     public ResponseEntity<List<PartyResponse>> getParties(Member loginUser){
         return ResponseEntity.status(HttpStatus.OK).body(partyService.getParties(loginUser));
