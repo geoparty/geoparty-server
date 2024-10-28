@@ -16,7 +16,8 @@ public enum ErrorCode {
     NOT_FOUND(404, "페이지를 찾지 못했습니다."),
     NOT_ENOUGH_MILEAGE(403,"마일리지가 부족합니다." ),
 
-    MEMBER_NOT_FOUND(404, "존재하지 않는 유저입니다.");
+    MEMBER_NOT_FOUND(404, "존재하지 않는 유저입니다."),
+    ORGANIZATION_NOT_FOUND(404, "존재하지 않는 환경단체입니다.");
 
 
     private final int errorCode;

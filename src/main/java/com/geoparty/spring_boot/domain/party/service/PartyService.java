@@ -2,6 +2,8 @@ package com.geoparty.spring_boot.domain.party.service;
 
 import com.geoparty.spring_boot.domain.member.entity.Member;
 import com.geoparty.spring_boot.domain.member.repository.MemberRepository;
+import com.geoparty.spring_boot.domain.organization.entity.Organization;
+import com.geoparty.spring_boot.domain.organization.repository.OrganizationRepository;
 import com.geoparty.spring_boot.domain.party.dto.request.PartyRequest;
 import com.geoparty.spring_boot.domain.party.dto.response.PartyResponse;
 import com.geoparty.spring_boot.domain.party.entity.Party;
@@ -27,6 +29,7 @@ public class PartyService {
     private final PartyRepository partyRepository;
     private final MemberRepository memberRepository;
     private final UserPartyRepository userPartyRepository;
+    private final OrganizationRepository organizationRepository;
 
     @Transactional
     public void createParty(PartyRequest request, Member user) {
@@ -50,11 +53,20 @@ public class PartyService {
         userPartyRepository.save(userParty);
     }
 
-    public List<PartyResponse> getParties(Member loginMember) {
+    public List<PartyResponse> getHomeParties(Member loginMember) {
 //        validMember(loginMember);
         List<UserParty> parties = userPartyRepository.findUserPartiesByMember(loginMember);
         return parties.stream()
-                .map(userParty -> PartyResponse.from(userParty.getParty()))
+                .map(userParty -> PartyResponse.from(userParty.getParty(), userParty.getParty().getOrganization()))
+                .collect(Collectors.toList());
+    }
+
+    public List<PartyResponse> getParties(Long organizationId) {
+        Organization organization = organizationRepository.findById(organizationId)
+                .orElseThrow(() -> new BaseException(ErrorCode.ORGANIZATION_NOT_FOUND));
+        List<Party> parties = partyRepository.findByOrganization(organization);
+        return parties.stream()
+                .map(party -> PartyResponse.from(party, organization))
                 .collect(Collectors.toList());
     }
 }

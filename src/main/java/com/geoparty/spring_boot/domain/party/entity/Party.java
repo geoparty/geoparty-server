@@ -41,7 +41,7 @@ public class Party extends AuditingFields {
     @Column(nullable = false)
     private Integer pointPerPerson; // 1인당 후원 금액
 
-    private Integer duration; // 결제 지속 금액
+    private Integer duration; // 결제 지속 개월수
 
     @Enumerated(EnumType.STRING)
     private PartyType status;

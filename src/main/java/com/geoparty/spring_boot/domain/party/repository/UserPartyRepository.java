@@ -10,8 +10,9 @@ import org.springframework.data.repository.query.Param;
 import java.util.List;
 
 public interface UserPartyRepository extends JpaRepository<UserParty, Long> {
-    @Query("SELECT up FROM UserParty up "
-            + "JOIN FETCH up.party "
-            + "WHERE up.member = :member")
+    @Query("SELECT up FROM UserParty up " +
+            "JOIN FETCH up.party p " +
+            "JOIN FETCH p.organization " +
+            "WHERE up.member = :member")
     List<UserParty> findUserPartiesByMember(@Param("member") Member member);
 }

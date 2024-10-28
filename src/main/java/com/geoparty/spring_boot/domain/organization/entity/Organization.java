@@ -14,4 +14,10 @@ public class Organization extends AuditingFields {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "organization_id")
     private Long id;
+
+    @Column(nullable = false, length = 100)
+    private String title;
+
+    @Column(length = 255)
+    private String thumbnail;
 }
