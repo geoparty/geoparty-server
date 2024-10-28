@@ -42,6 +42,9 @@ public class SecurityConfig {
                                 .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
                                 .requestMatchers(HttpMethod.GET,"/api/auth/refresh").permitAll()
                                 .requestMatchers(HttpMethod.POST, "/api/auth/logout").permitAll()
+                                // api 테스트를 위한 임시 허용
+                                .requestMatchers(HttpMethod.GET,"/api/**").permitAll()
+                                .requestMatchers(HttpMethod.POST,"/api/**").permitAll()
                                 .anyRequest().authenticated())
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)  // Http 요청이 UsernamePasswordAuthenticationFilter 전에 JwtAuthenticationFilter
                 .build();
