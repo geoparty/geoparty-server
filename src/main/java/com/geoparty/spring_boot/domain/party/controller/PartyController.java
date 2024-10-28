@@ -50,7 +50,15 @@ public class PartyController {
     @GetMapping
     @Operation(description = "환경단체에 따른 파티 리스트를 반환한다.")
     public ResponseEntity<List<PartyResponse>> getParties(
-            @RequestParam(name = "organization-id") final Long organizationId){
-        return ResponseEntity.status(HttpStatus.OK).body(partyService.getParties(organizationId));
+            @RequestParam(name = "organization-id", required = false) Long organizationId,
+            @RequestParam(name = "party-name", required = false) String partyName){
+
+        if (organizationId != null) {
+            // 특정 환경 단체의 파티 조회
+            return ResponseEntity.status(HttpStatus.OK).body(partyService.getPartiesByOrganization(organizationId));
+        } else {
+            // 파티 이름에 따른 파티 조회
+            return ResponseEntity.status(HttpStatus.OK).body(partyService.getPartiesByName(partyName));
+        }
     }
 }

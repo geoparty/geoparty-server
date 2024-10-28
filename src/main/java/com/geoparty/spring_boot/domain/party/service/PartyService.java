@@ -67,12 +67,19 @@ public class PartyService {
                 .collect(Collectors.toList());
     }
 
-    public List<PartyResponse> getParties(Long organizationId) {
+    public List<PartyResponse> getPartiesByOrganization(Long organizationId) {
         Organization organization = organizationRepository.findById(organizationId)
                 .orElseThrow(() -> new BaseException(ErrorCode.ORGANIZATION_NOT_FOUND));
         List<Party> parties = partyRepository.findByOrganization(organization);
         return parties.stream()
                 .map(party -> PartyResponse.from(party, organization))
+                .collect(Collectors.toList());
+    }
+
+    public List<PartyResponse> getPartiesByName(String partyName) {
+        List<Party> parties = partyRepository.findByTitle(partyName);
+        return parties.stream()
+                .map(party -> PartyResponse.from(party, party.getOrganization()))
                 .collect(Collectors.toList());
     }
 }
