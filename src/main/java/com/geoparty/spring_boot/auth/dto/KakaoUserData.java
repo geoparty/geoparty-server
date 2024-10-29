@@ -18,6 +18,7 @@ public class KakaoUserData {
     String gender;
     String birthYear;
     String nickName;
+    String profileImage;
 
     public void setUserData(Map<String,String> userData){ // Json 데이터를 매핑해주는 함수
         socialId = userData.get("id");
@@ -25,6 +26,8 @@ public class KakaoUserData {
         gender = userData.get("gender");
         birthYear = userData.get("birthyear");
         ObjectMapper om = new ObjectMapper();
-        nickName = om.convertValue(userData.get("profile"), Map.class).get("nickname").toString();
+        Map profileData = om.convertValue(userData.get("profile"), Map.class);
+        nickName = profileData.get("nickname").toString();
+        profileImage = profileData.get("thumbnail_image_url").toString();
     }
 }

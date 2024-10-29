@@ -51,8 +51,8 @@ public class OrgServiceImpl implements OrgService {
 
             // pdf file 업로드
             String fileUrl = null;
-            if (request.getPdffile() != null) {
-                fileUrl = s3Uploader.uploadFile(request.getPdffile());
+            if (request.getPdfFile() != null) {
+                fileUrl = s3Uploader.uploadFile(request.getPdfFile());
             }
 
             File file = new File(fileUrl, org);

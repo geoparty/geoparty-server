@@ -1,6 +1,7 @@
 package com.geoparty.spring_boot.security.jwt;
 
 import com.geoparty.spring_boot.security.config.ValueConfig;
+import com.geoparty.spring_boot.security.model.PrincipalDetails;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -16,16 +17,14 @@ import io.jsonwebtoken.*;
 import static io.jsonwebtoken.Header.JWT_TYPE;
 import static io.jsonwebtoken.Header.TYPE;
 import static io.jsonwebtoken.security.Keys.hmacShaKeyFor;
-import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 
+// JWT 토큰 생성 및 검증 관련 유틸리티 클래스
 @Slf4j
 @Component
 @RequiredArgsConstructor
 public class JWTUtil {
 
     private final ValueConfig valueConfig;
-    private static final String BEARER_HEADER = "Bearer ";
-    private static final String BLANK = "";
 
     //토큰을 생성하는 메소드
     public String generateToken(Authentication authentication, long expiration) {
@@ -82,25 +81,9 @@ public class JWTUtil {
                 .getBody(); // claim 정보 추출
     }
 
-    //
     public Integer getUserFromJwt(String token) {
         Claims claims = getBody(token);
         return Integer.parseInt(claims.get("userId").toString()); // userId를 추출한다.
     }
 
-    // 헤더로 부터 액세스토큰을 가지고 와서 MemberId를 추출한다
-    public Optional<Integer> getMemberId(HttpServletRequest request){
-        String authorization = request.getHeader(AUTHORIZATION); // 액세스 토큰 가지고 오기
-        Integer userId = null;
-
-        if(authorization != null && authorization.startsWith(BEARER_HEADER)){ // 토큰이 존재하지 않거나 Bearer 타입이 아니면 실패
-            String jwtToken = authorization.replaceFirst(BEARER_HEADER, BLANK); // jwt access token 추출
-            if(!validateToken(jwtToken).equals(JWTValType.VALID_JWT)){ // access token이 유효하지 않으면
-                return Optional.of(null); // null 반환
-            }
-            userId = getUserFromJwt(jwtToken); // 토큰을 추출하여 UserId를 보내준다.
-        }
-
-        return Optional.of(userId);
-    }
 }

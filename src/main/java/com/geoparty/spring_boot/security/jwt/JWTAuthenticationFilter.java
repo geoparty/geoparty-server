@@ -15,25 +15,23 @@ import org.springframework.util.*;
 
 import java.io.IOException;
 
-import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 
+// JWT 인증 필터로 요청에 JWT를 검증하는 클래스
 @Slf4j
 @Component
 @RequiredArgsConstructor
 public class JWTAuthenticationFilter extends OncePerRequestFilter {
 
-    private static final String BEARER_HEADER = "Bearer ";
-    private static final String BLANK = "";
-
-    private final com.geoparty.spring_boot.security.jwt.JWTUtil JWTUtil;
+    private final TokenProvider tokenProvider;
+    private final JWTUtil jwtUtil;
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         try {
-            val token = getAccessTokenFromRequest(request);
-            if (StringUtils.hasText(token) && JWTUtil.validateToken(token) == JWTValType.VALID_JWT) { // null 이 아니고 유효하다면
+            val token = tokenProvider.getAccessTokenFromRequest(request);
+            if (StringUtils.hasText(token) && jwtUtil.validateToken(token) == JWTValType.VALID_JWT) { // null 이 아니고 유효하다면
                 val authentication = new UserAuthentication(getUserId(token), null, null); // 사용자의 식별자를 추출하지
-                authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request)); //
+                authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
                 SecurityContextHolder.getContext().setAuthentication(authentication);
             }
         } catch (Exception exception) {
@@ -43,24 +41,9 @@ public class JWTAuthenticationFilter extends OncePerRequestFilter {
         filterChain.doFilter(request, response);
     }
 
-    // 요청으로 부터 액세스 토큰을 추출하는 메서드
-    private String getAccessTokenFromRequest(HttpServletRequest request) {
-        return isContainsAccessToken(request) ? getAuthorizationAccessToken(request) : null;
+    // 사용자 아이디 추출
+    private Integer getUserId(String token) {
+        return jwtUtil.getUserFromJwt(token);
     }
 
-    // 액세스 토큰이 있는지 확인하는 메서드
-    private boolean isContainsAccessToken(HttpServletRequest request) {
-        String authorization = request.getHeader(AUTHORIZATION);
-        return authorization != null && authorization.startsWith(BEARER_HEADER);
-    }
-
-    // 액세스 토큰을 헤더로 부터 가져온다.
-    private String getAuthorizationAccessToken(HttpServletRequest request) {
-        return request.getHeader(AUTHORIZATION).replaceFirst(BEARER_HEADER, BLANK);
-    }
-
-    // 사용자 아이디
-    private int getUserId(String token) {
-        return JWTUtil.getUserFromJwt(token);
-    }
 }

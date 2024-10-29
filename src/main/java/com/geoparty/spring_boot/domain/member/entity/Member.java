@@ -37,27 +37,30 @@ public class Member extends AuditingFields {
     @Column(nullable = false)
     private String socialId;
 
+    @Setter @Column(nullable = false)
+    @ColumnDefault("0")
+    private Integer point;
+
+    @Setter @Column(length = 500)
+    private String profileImage;
+
     protected Member() {}
 
     @Builder
-    private Member(Integer memberId, String email, String nickname, String userRefreshtoken, boolean userIsWithdraw, String socialId) {
+    private Member(Integer memberId, String email, String nickname, String userRefreshtoken, boolean userIsWithdraw, String socialId, Integer point, String profileImage) {
         this.memberId = memberId;
         this.email = email;
         this.nickname = nickname;
         this.userRefreshtoken = userRefreshtoken;
         this.userIsWithdraw = userIsWithdraw;
         this.socialId = socialId;
+        this.point = point;
+        this.profileImage = profileImage;
     }
 
-    public static Member of(Integer memberId, String email, String nickname, String userRefreshtoken, boolean userIsWithdraw, String socialId) {
-        return new Member(memberId, email, nickname, userRefreshtoken, userIsWithdraw, socialId);
-    }
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof Member that)) return false;
-        return this.getMemberId() != null && this.getMemberId().equals(that.getMemberId());
+    public static Member of(Integer memberId, String email, String nickname, String userRefreshtoken, boolean userIsWithdraw, String socialId, Integer point, String profileImage) {
+        return new Member(memberId, email, nickname, userRefreshtoken, userIsWithdraw, socialId, point, profileImage);
     }
 
     public void updateRefreshToken(String refreshToken) {

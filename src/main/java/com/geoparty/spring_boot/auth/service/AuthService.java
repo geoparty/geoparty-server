@@ -3,12 +3,13 @@ package com.geoparty.spring_boot.auth.service;
 import com.geoparty.spring_boot.auth.dto.KakaoUserData;
 import com.geoparty.spring_boot.auth.dto.SignInResponse;
 import com.geoparty.spring_boot.auth.vo.Token;
-import com.geoparty.spring_boot.domain.member.dto.MemberDto;
+import com.geoparty.spring_boot.domain.member.dto.MemberResponse;
 import com.geoparty.spring_boot.domain.member.entity.Member;
 import com.geoparty.spring_boot.domain.member.repository.MemberRepository;
 import com.geoparty.spring_boot.global.exception.BaseException;
 import com.geoparty.spring_boot.global.exception.ErrorCode;
 import com.geoparty.spring_boot.security.jwt.JWTUtil;
+import com.geoparty.spring_boot.security.jwt.TokenProvider;
 import com.geoparty.spring_boot.security.jwt.UserAuthentication;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -17,28 +18,26 @@ import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Objects;
-
 import static com.geoparty.spring_boot.security.jwt.JWTValType.VALID_JWT;
 @Slf4j
 @Service
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
 public class AuthService {
-    private static final int ACCESS_TOKEN_EXPIRATION = 24 * 60 * 60 * 1000; // 1일
+    private static final int ACCESS_TOKEN_EXPIRATION = 3 * 24 * 60 * 60 * 1000; // 3일
     private static final int REFRESH_TOKEN_EXPIRATION = 1209600000; // 2주
 
     private final JWTUtil JWTUtil;
     private final MemberRepository memberRepository;
     private final KakaoService kakaoService;
-
+    private final TokenProvider tokenProvider;
 
     // 로그인(유저 정보 없다면 db에 저장하고 데이터 반환)
     @Transactional
     public SignInResponse signIn(String socialAccessToken) { // 카카오 액세스 토큰
         Member user = getUser(socialAccessToken); // 액세스 토큰의  유저 찾기
         Token token = getToken(user);
-        return SignInResponse.of(token, MemberDto.from(user));
+        return SignInResponse.of(token, MemberResponse.from(user));
     }
 
     // 유저 정보 없으면 저장 후 리턴
@@ -61,8 +60,9 @@ public class AuthService {
         Member user = Member.builder()
                 .socialId(userData.getSocialId())
                 .email(userData.getEmail())
-                .userIsWithdraw(false)
                 .nickname(userData.getNickName())
+                .userIsWithdraw(false)
+                .point(0) // 초기 포인트는 0으로 세팅
                 .build();
         return memberRepository.save(user);
     }
@@ -139,9 +139,8 @@ public class AuthService {
     // access token으로 access token, refresh token 재발급하는 메소드
     @Transactional
     public Token refresh(String refreshToken) {
-        log.info("hello");
-        Integer userId = JWTUtil.getUserFromJwt(refreshToken); //  유저 id 추출
-        log.info("where?");
+
+        Integer userId = JWTUtil.getUserFromJwt(refreshToken);; //  유저 id 추출
         Member user = memberRepository.findUserByUserId(userId)
                 .orElseThrow(() -> new BaseException(ErrorCode.UNAUTHORIZED)); //유저 정보 추출
         String realRefreshToken = user.getUserRefreshtoken(); // 저장된 refreshToken 가지고 오기

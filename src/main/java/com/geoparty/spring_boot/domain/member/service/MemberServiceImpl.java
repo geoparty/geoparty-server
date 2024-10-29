@@ -1,6 +1,6 @@
 package com.geoparty.spring_boot.domain.member.service;
 
-import com.geoparty.spring_boot.domain.member.dto.MemberDto;
+import com.geoparty.spring_boot.domain.member.dto.MemberResponse;
 import com.geoparty.spring_boot.domain.member.repository.MemberRepository;
 import com.geoparty.spring_boot.global.exception.BaseException;
 import com.geoparty.spring_boot.global.exception.ErrorCode;
@@ -16,10 +16,10 @@ public class MemberServiceImpl implements MemberService {
     private final JWTUtil jwtUtil;
 
     @Override
-    public MemberDto getUserInfo(String accessToken) {
+    public MemberResponse getUserInfo(String accessToken) {
 
         Integer userId = jwtUtil.getUserFromJwt(accessToken);
-        return MemberDto.from(memberRepository.findUserByUserId(userId)
+        return MemberResponse.from(memberRepository.findUserByUserId(userId)
                 .orElseThrow(() -> new BaseException(ErrorCode.NOT_FOUND_DATA)));
     }
 
