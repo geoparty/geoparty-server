@@ -72,6 +72,7 @@ public class PartyResponse {
                 .title(party.getTitle())
                 .intro(party.getIntro())
                 .payDate(party.getPayDate())
+                .startDate(party.getCreatedAt())
                 .duration(party.getDuration())
                 .targetPoint(party.getTargetPoint())
                 .totalPoint(party.getTotalPoint())
