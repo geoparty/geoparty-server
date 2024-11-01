@@ -23,7 +23,7 @@ public class PaymentResponse {
     public static PaymentResponse from(Payment payment){
         return PaymentResponse.builder()
                 .amount(payment.getAmount())
-                .date(payment.getDate())
+                .date(payment.getCreatedAt())
                 .build();
     }
 }

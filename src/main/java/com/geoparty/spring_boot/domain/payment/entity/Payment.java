@@ -25,7 +25,4 @@ public class Payment extends AuditingFields {
 
     @Column(nullable = false)
     private Integer amount;
-
-    @Column(nullable = false)
-    private LocalDateTime date;
 }
