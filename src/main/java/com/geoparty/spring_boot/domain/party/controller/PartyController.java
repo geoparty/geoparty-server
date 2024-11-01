@@ -3,6 +3,7 @@ package com.geoparty.spring_boot.domain.party.controller;
 import com.geoparty.spring_boot.domain.member.entity.Member;
 import com.geoparty.spring_boot.domain.member.repository.MemberRepository;
 import com.geoparty.spring_boot.domain.party.dto.request.PartyRequest;
+import com.geoparty.spring_boot.domain.party.dto.response.PartyDetailResponse;
 import com.geoparty.spring_boot.domain.party.dto.response.PartyResponse;
 import com.geoparty.spring_boot.domain.party.entity.Party;
 import com.geoparty.spring_boot.domain.party.service.PartyService;
@@ -60,5 +61,12 @@ public class PartyController {
             // 파티 이름에 따른 파티 조회
             return ResponseEntity.status(HttpStatus.OK).body(partyService.getPartiesByName(partyName));
         }
+    }
+
+    @GetMapping("/{party-id}")
+    @Operation(description = "파티 세부 정보를 반환한다")
+    public ResponseEntity<PartyDetailResponse> getPartyDetails(
+            @PathVariable(name = "party-id") Long partyId) {
+        return ResponseEntity.status(HttpStatus.OK).body(partyService.getPartyDetails(partyId));
     }
 }

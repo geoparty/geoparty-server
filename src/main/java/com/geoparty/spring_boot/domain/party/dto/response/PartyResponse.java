@@ -29,6 +29,9 @@ public class PartyResponse {
     @Schema(description = "파티 소개")
     private String intro;
 
+    @Schema(description = "파티 시작 날짜")
+    private LocalDateTime startDate;
+
     @Schema(description = "결제 예정 날짜")
     private LocalDateTime payDate;
 
@@ -48,11 +51,12 @@ public class PartyResponse {
     private PartyType status;
 
     @Builder
-    public PartyResponse(String organization, String imgUrl, String title, String intro, LocalDateTime payDate, Integer duration, Integer targetPoint, Integer totalPoint, Integer pointPerPerson, PartyType status) {
+    public PartyResponse(String organization, String imgUrl, String title, String intro, LocalDateTime startDate, LocalDateTime payDate, Integer duration, Integer targetPoint, Integer totalPoint, Integer pointPerPerson, PartyType status) {
         this.organization = organization;
         this.imgUrl = imgUrl;
         this.title = title;
         this.intro = intro;
+        this.startDate = startDate;
         this.payDate = payDate;
         this.duration = duration;
         this.targetPoint = targetPoint;
@@ -68,6 +72,7 @@ public class PartyResponse {
                 .title(party.getTitle())
                 .intro(party.getIntro())
                 .payDate(party.getPayDate())
+                .startDate(party.getCreatedAt())
                 .duration(party.getDuration())
                 .targetPoint(party.getTargetPoint())
                 .totalPoint(party.getTotalPoint())
