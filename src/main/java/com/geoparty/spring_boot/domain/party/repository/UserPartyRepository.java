@@ -15,4 +15,10 @@ public interface UserPartyRepository extends JpaRepository<UserParty, Long> {
             "JOIN FETCH p.organization " +
             "WHERE up.member = :member")
     List<UserParty> findUserPartiesByMember(@Param("member") Member member);
+
+    @Query("SELECT up FROM UserParty up " +
+            "JOIN FETCH up.party p " +
+            "JOIN FETCH up.member m " +
+            "WHERE p = :party")
+    List<UserParty> findUserPartiesByParty(@Param("party") Party party);
 }
