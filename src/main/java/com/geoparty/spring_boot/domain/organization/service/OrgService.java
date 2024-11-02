@@ -4,6 +4,7 @@ import com.geoparty.spring_boot.domain.organization.dto.request.OrgListRequest;
 import com.geoparty.spring_boot.domain.organization.dto.request.OrgRequest;
 import com.geoparty.spring_boot.domain.organization.dto.response.OrgListResponse;
 import com.geoparty.spring_boot.domain.organization.dto.response.OrgResponse;
+import org.springframework.stereotype.Service;
 
 
 public interface OrgService {

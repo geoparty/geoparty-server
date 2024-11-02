@@ -1,5 +1,8 @@
 package com.geoparty.spring_boot.security.jwt;
 
+import com.geoparty.spring_boot.domain.member.entity.Member;
+import com.geoparty.spring_boot.domain.member.repository.MemberRepository;
+import com.geoparty.spring_boot.security.model.PrincipalDetails;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -7,7 +10,10 @@ import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
@@ -24,17 +30,36 @@ public class JWTAuthenticationFilter extends OncePerRequestFilter {
 
     private final TokenProvider tokenProvider;
     private final JWTUtil jwtUtil;
+    private final MemberRepository memberRepository;
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         try {
-            val token = tokenProvider.getAccessTokenFromRequest(request);
-            if (StringUtils.hasText(token) && jwtUtil.validateToken(token) == JWTValType.VALID_JWT) { // null 이 아니고 유효하다면
-                val authentication = new UserAuthentication(getUserId(token), null, null); // 사용자의 식별자를 추출하지
+//            val token = tokenProvider.getAccessTokenFromRequest(request);
+//            log.debug("Extracted Token: {}", token);
+//            if (StringUtils.hasText(token) && jwtUtil.validateToken(token) == JWTValType.VALID_JWT) { // null 이 아니고 유효하다면
+//                log.debug("Token is valid");
+//                val authentication = new UserAuthentication(getUserId(token), null, null); // 사용자의 식별자를 추출하지
+//                log.debug("User Authentication: {}", authentication);
+//                authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+//                SecurityContextHolder.getContext().setAuthentication(authentication);
+//            } else {
+//                log.warn("Token is invalid or empty");
+//            }
+            String token = tokenProvider.getAccessTokenFromRequest(request);
+            if (StringUtils.hasText(token) && jwtUtil.validateToken(token) == JWTValType.VALID_JWT) {
+                Integer userId = jwtUtil.getUserFromJwt(token);
+                Member member = memberRepository.findUserByMemberId(userId).orElseThrow(() -> new UsernameNotFoundException("사용자를 찾을 수 없습니다."));
+
+                PrincipalDetails principalDetails = new PrincipalDetails(member);
+                UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(
+                        principalDetails, null, principalDetails.getAuthorities()
+                );
                 authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
                 SecurityContextHolder.getContext().setAuthentication(authentication);
             }
         } catch (Exception exception) {
+            log.error("Exception during JWT processing: ", exception);
             log.error(exception.getMessage());
         }
 

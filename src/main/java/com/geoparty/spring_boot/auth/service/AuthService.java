@@ -1,5 +1,6 @@
 package com.geoparty.spring_boot.auth.service;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.geoparty.spring_boot.auth.dto.KakaoUserData;
 import com.geoparty.spring_boot.auth.dto.SignInResponse;
 import com.geoparty.spring_boot.auth.vo.Token;
@@ -34,21 +35,21 @@ public class AuthService {
 
     // 로그인(유저 정보 없다면 db에 저장하고 데이터 반환)
     @Transactional
-    public SignInResponse signIn(String socialAccessToken) { // 카카오 액세스 토큰
+    public SignInResponse signIn(String socialAccessToken) throws JsonProcessingException { // 카카오 액세스 토큰
         Member user = getUser(socialAccessToken); // 액세스 토큰의  유저 찾기
         Token token = getToken(user);
         return SignInResponse.of(token, MemberResponse.from(user));
     }
 
     // 유저 정보 없으면 저장 후 리턴
-    private Member getUser(String socialAccessToken) {
+    private Member getUser(String socialAccessToken) throws JsonProcessingException {
         KakaoUserData userData = getUserData(socialAccessToken);
         return memberRepository.findBySocialId(userData.getSocialId())
                 .orElseGet(() -> saveUser(userData));
     }
 
     // 유저 정보 카카오에서 받아오기
-    private KakaoUserData getUserData(String socialAccessToken) {
+    private KakaoUserData getUserData(String socialAccessToken) throws JsonProcessingException {
         KakaoUserData kakaoUserData = new KakaoUserData();
         kakaoUserData.setUserData(kakaoService.getKakaoData(socialAccessToken));
         return kakaoUserData;
@@ -59,8 +60,8 @@ public class AuthService {
 
         Member user = Member.builder()
                 .socialId(userData.getSocialId())
-                .email(userData.getEmail())
                 .nickname(userData.getNickName())
+                .thumbnailImageUrl(userData.getProfileImage())
                 .userIsWithdraw(false)
                 .point(0) // 초기 포인트는 0으로 세팅
                 .build();
@@ -84,7 +85,7 @@ public class AuthService {
 
     // User 찾기
     private Member findUser(int id) {
-        return memberRepository.findUserByUserId(id)
+        return memberRepository.findUserByMemberId(id)
                 .orElseThrow();
     }
 
@@ -141,15 +142,19 @@ public class AuthService {
     public Token refresh(String refreshToken) {
 
         Integer userId = JWTUtil.getUserFromJwt(refreshToken);; //  유저 id 추출
-        Member user = memberRepository.findUserByUserId(userId)
+        Member user = memberRepository.findUserByMemberId(userId)
                 .orElseThrow(() -> new BaseException(ErrorCode.UNAUTHORIZED)); //유저 정보 추출
         String realRefreshToken = user.getUserRefreshtoken(); // 저장된 refreshToken 가지고 오기
 
         // 저장된 리프레시 토큰이 유효하지 않다면 401 에러
-        if (!JWTUtil.validateToken(realRefreshToken).equals(VALID_JWT)) {
+        if (realRefreshToken == null ||!JWTUtil.validateToken(realRefreshToken).equals(VALID_JWT)) {
             throw new BaseException(ErrorCode.INVALID_TOKEN);
         }
 
+        // 저장된 리프레시 토큰의 유효성 검증
+        if (!JWTUtil.validateToken(realRefreshToken).equals(VALID_JWT)) {
+            throw new BaseException(ErrorCode.INVALID_TOKEN);
+        }
         // access Token 이 유효하면 엑세스 토큰, 리프레시 토큰 새로 생성 해서 반환
         return getToken(user); // Token 재생성 및 user 리프레시 토큰 컬럼에 저장한다.
         }

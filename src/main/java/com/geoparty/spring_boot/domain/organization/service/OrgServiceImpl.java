@@ -22,7 +22,9 @@ import com.geoparty.spring_boot.global.exception.BaseException;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -119,16 +121,22 @@ public class OrgServiceImpl implements OrgService {
                 .orElseThrow(() -> new BaseException(ErrorCode.NOT_FOUND_DATA));
 
         // 환경 단체 디테일 사진
-        List<OrgResponse.PhotoDTO> photos =
-                imageRepository.findByOrganizationId(orgId)
-                        .stream().map(p ->
-                                OrgResponse.PhotoDTO.builder()
-                                        .imgUrl(p.getImageUrl())
-                                        .build()
-                        ).toList();
+        List<OrgResponse.PhotoDTO> photos = imageRepository.findByOrganizationId(orgId)
+                .stream()
+                .map(p -> OrgResponse.PhotoDTO.builder()
+                        .imgUrl(p.getImageUrl())
+                        .build())
+                .toList();
+
+        // photos가 비어 있을 경우 빈 리스트로 초기화
+        if (photos.isEmpty()) {
+            photos = Collections.emptyList();
+        }
 
         // 환경 단체 문서
-        String docs = fileRepository.findByOrganizationId(orgId).toString();
+        String docs = Optional.ofNullable(fileRepository.findByOrganizationId(orgId))
+                .map(Object::toString)
+                .orElse(""); // 문서가 없을 경우 빈 문자열 반환
 
         return OrgResponse.builder()
                 .title(org.getTitle())

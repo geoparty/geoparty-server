@@ -2,6 +2,7 @@ package com.geoparty.spring_boot.security.model;
 
 import com.geoparty.spring_boot.domain.member.entity.Member;
 import lombok.Data;
+import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -26,7 +27,7 @@ public class PrincipalDetails implements UserDetails {
 
     @Override
     public String getUsername() {
-        return member.getEmail();
+        return member.getNickname();
     }
 
     @Override

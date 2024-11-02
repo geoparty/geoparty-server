@@ -1,10 +1,7 @@
 package com.geoparty.spring_boot.domain.member.entity;
 
 import com.geoparty.spring_boot.global.domain.AuditingFields;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.Setter;
-import lombok.ToString;
+import lombok.*;
 
 import jakarta.persistence.*;
 import org.hibernate.annotations.ColumnDefault;
@@ -24,7 +21,6 @@ public class Member extends AuditingFields {
     @Column(nullable = false)
     private Integer memberId;
 
-    @Setter @Column(length = 100) private String email;
     @Setter @Column(length = 100) private String nickname;
 
     @Setter @Column(length = 250) private String userRefreshtoken;
@@ -42,25 +38,19 @@ public class Member extends AuditingFields {
     private Integer point;
 
     @Setter @Column(length = 500)
-    private String profileImage;
+    private String thumbnailImageUrl;
 
     protected Member() {}
 
     @Builder
-    private Member(Integer memberId, String email, String nickname, String userRefreshtoken, boolean userIsWithdraw, String socialId, Integer point, String profileImage) {
+    private Member(Integer memberId, String nickname, String userRefreshtoken, boolean userIsWithdraw, String socialId, Integer point, String thumbnailImageUrl ) {
         this.memberId = memberId;
-        this.email = email;
         this.nickname = nickname;
         this.userRefreshtoken = userRefreshtoken;
         this.userIsWithdraw = userIsWithdraw;
         this.socialId = socialId;
         this.point = point;
-        this.profileImage = profileImage;
-    }
-
-
-    public static Member of(Integer memberId, String email, String nickname, String userRefreshtoken, boolean userIsWithdraw, String socialId, Integer point, String profileImage) {
-        return new Member(memberId, email, nickname, userRefreshtoken, userIsWithdraw, socialId, point, profileImage);
+        this.thumbnailImageUrl = thumbnailImageUrl;
     }
 
     public void updateRefreshToken(String refreshToken) {

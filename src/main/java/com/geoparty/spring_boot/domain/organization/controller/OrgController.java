@@ -42,7 +42,8 @@ public class OrgController {
 
     @GetMapping("/{orgId}")
     @Operation(description = "환경단체 상세 조회")
-    public ResponseEntity<OrgResponse> getOrganization(@PathVariable long orgId) {
+    public ResponseEntity<OrgResponse> getOrganization(@PathVariable(value = "orgId") long orgId) {
+        System.out.println(orgId);
         OrgResponse orgDetail = orgService.getDetail(orgId);
         return ResponseEntity.status(HttpStatus.OK).body(orgDetail);
     }

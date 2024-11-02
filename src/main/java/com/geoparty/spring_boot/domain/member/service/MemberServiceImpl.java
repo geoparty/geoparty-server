@@ -18,8 +18,8 @@ public class MemberServiceImpl implements MemberService {
     @Override
     public MemberResponse getUserInfo(String accessToken) {
 
-        Integer userId = jwtUtil.getUserFromJwt(accessToken);
-        return MemberResponse.from(memberRepository.findUserByUserId(userId)
+        Integer memberId = jwtUtil.getUserFromJwt(accessToken);
+        return MemberResponse.from(memberRepository.findUserByMemberId(memberId)
                 .orElseThrow(() -> new BaseException(ErrorCode.NOT_FOUND_DATA)));
     }
 

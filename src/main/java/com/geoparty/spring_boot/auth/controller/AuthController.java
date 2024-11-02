@@ -1,5 +1,6 @@
 package com.geoparty.spring_boot.auth.controller;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.geoparty.spring_boot.auth.dto.AuthReqDto;
 import com.geoparty.spring_boot.auth.dto.RefreshReqDto;
 import com.geoparty.spring_boot.auth.dto.SignInResponse;
@@ -10,11 +11,13 @@ import com.geoparty.spring_boot.security.jwt.JWTUtil;
 import com.geoparty.spring_boot.security.model.PrincipalDetails;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import com.geoparty.spring_boot.auth.vo.Token;
 import com.geoparty.spring_boot.security.jwt.JWTValType;
+import org.springframework.web.server.ResponseStatusException;
 
 
 @Slf4j
@@ -27,9 +30,9 @@ public class AuthController {
 
     @CrossOrigin(origins = "*")
     @PostMapping
-    public ResponseEntity<?> signIn(@RequestBody AuthReqDto accessToken ) {
+    public ResponseEntity<?> signIn(@RequestBody AuthReqDto accessToken ) throws JsonProcessingException {
 
-        String socialAccessToken = "Bearer " + accessToken.getAccessToken();// 카카오 엑세스 토큰
+        String socialAccessToken = accessToken.getAccessToken();// 카카오 엑세스 토큰
 
         log.info(accessToken.getAccessToken());
         //유저정보를 받아서 db에 저장
@@ -43,6 +46,10 @@ public class AuthController {
 
     @GetMapping("/userInfo")
     public ResponseEntity<?> getUserInfo(@AuthenticationPrincipal PrincipalDetails memberDetails) {
+        // memberDetails가 null인지 확인하는 방어 코드 추가
+        if (memberDetails == null || memberDetails.getMember() == null) {
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "인증되지 않은 사용자입니다.");
+        }
 
         return ResponseEntity.ok()
                 .body(memberDetails.getMember());
