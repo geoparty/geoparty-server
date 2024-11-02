@@ -1,6 +1,8 @@
 package com.geoparty.spring_boot.security.jwt;
 
 import com.geoparty.spring_boot.security.config.ValueConfig;
+import com.geoparty.spring_boot.security.model.PrincipalDetails;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.Authentication;
@@ -8,12 +10,15 @@ import org.springframework.stereotype.Component;
 
 import javax.crypto.SecretKey;
 import java.util.Date;
+import java.util.Optional;
+
 import static java.util.Base64.getEncoder;
 import io.jsonwebtoken.*;
 import static io.jsonwebtoken.Header.JWT_TYPE;
 import static io.jsonwebtoken.Header.TYPE;
 import static io.jsonwebtoken.security.Keys.hmacShaKeyFor;
 
+// JWT 토큰 생성 및 검증 관련 유틸리티 클래스
 @Slf4j
 @Component
 @RequiredArgsConstructor
@@ -76,9 +81,9 @@ public class JWTUtil {
                 .getBody(); // claim 정보 추출
     }
 
-    //
     public Integer getUserFromJwt(String token) {
         Claims claims = getBody(token);
         return Integer.parseInt(claims.get("userId").toString()); // userId를 추출한다.
     }
+
 }

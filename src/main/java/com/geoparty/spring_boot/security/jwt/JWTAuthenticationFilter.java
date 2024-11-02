@@ -1,5 +1,8 @@
 package com.geoparty.spring_boot.security.jwt;
 
+import com.geoparty.spring_boot.domain.member.entity.Member;
+import com.geoparty.spring_boot.domain.member.repository.MemberRepository;
+import com.geoparty.spring_boot.security.model.PrincipalDetails;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -7,7 +10,10 @@ import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
@@ -15,52 +21,54 @@ import org.springframework.util.*;
 
 import java.io.IOException;
 
-import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 
+// JWT 인증 필터로 요청에 JWT를 검증하는 클래스
 @Slf4j
 @Component
 @RequiredArgsConstructor
 public class JWTAuthenticationFilter extends OncePerRequestFilter {
 
-    private static final String BEARER_HEADER = "Bearer ";
-    private static final String BLANK = "";
-
-    private final com.geoparty.spring_boot.security.jwt.JWTUtil JWTUtil;
+    private final TokenProvider tokenProvider;
+    private final JWTUtil jwtUtil;
+    private final MemberRepository memberRepository;
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         try {
-            val token = getAccessTokenFromRequest(request);
-            if (StringUtils.hasText(token) && JWTUtil.validateToken(token) == JWTValType.VALID_JWT) { // null 이 아니고 유효하다면
-                val authentication = new UserAuthentication(getUserId(token), null, null); // 사용자의 식별자를 추출하지
-                authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request)); //
+//            val token = tokenProvider.getAccessTokenFromRequest(request);
+//            log.debug("Extracted Token: {}", token);
+//            if (StringUtils.hasText(token) && jwtUtil.validateToken(token) == JWTValType.VALID_JWT) { // null 이 아니고 유효하다면
+//                log.debug("Token is valid");
+//                val authentication = new UserAuthentication(getUserId(token), null, null); // 사용자의 식별자를 추출하지
+//                log.debug("User Authentication: {}", authentication);
+//                authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+//                SecurityContextHolder.getContext().setAuthentication(authentication);
+//            } else {
+//                log.warn("Token is invalid or empty");
+//            }
+            String token = tokenProvider.getAccessTokenFromRequest(request);
+            if (StringUtils.hasText(token) && jwtUtil.validateToken(token) == JWTValType.VALID_JWT) {
+                Integer userId = jwtUtil.getUserFromJwt(token);
+                Member member = memberRepository.findUserByMemberId(userId).orElseThrow(() -> new UsernameNotFoundException("사용자를 찾을 수 없습니다."));
+
+                PrincipalDetails principalDetails = new PrincipalDetails(member);
+                UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(
+                        principalDetails, null, principalDetails.getAuthorities()
+                );
+                authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
                 SecurityContextHolder.getContext().setAuthentication(authentication);
             }
         } catch (Exception exception) {
+            log.error("Exception during JWT processing: ", exception);
             log.error(exception.getMessage());
         }
 
         filterChain.doFilter(request, response);
     }
 
-    // 요청으로 부터 액세스 토큰을 추출하는 메서드
-    private String getAccessTokenFromRequest(HttpServletRequest request) {
-        return isContainsAccessToken(request) ? getAuthorizationAccessToken(request) : null;
+    // 사용자 아이디 추출
+    private Integer getUserId(String token) {
+        return jwtUtil.getUserFromJwt(token);
     }
 
-    // 액세스 토큰이 있는지 확인하는 메서드
-    private boolean isContainsAccessToken(HttpServletRequest request) {
-        String authorization = request.getHeader(AUTHORIZATION);
-        return authorization != null && authorization.startsWith(BEARER_HEADER);
-    }
-
-    // 액세스 토큰을 헤더로 부터 가져온다.
-    private String getAuthorizationAccessToken(HttpServletRequest request) {
-        return request.getHeader(AUTHORIZATION).replaceFirst(BEARER_HEADER, BLANK);
-    }
-
-    // 사용자 아이디
-    private int getUserId(String token) {
-        return JWTUtil.getUserFromJwt(token);
-    }
 }

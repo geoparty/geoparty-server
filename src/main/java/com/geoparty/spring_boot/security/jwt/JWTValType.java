@@ -1,5 +1,6 @@
 package com.geoparty.spring_boot.security.jwt;
 
+// JWT 유효성 검사 결과에 대한 타입 정의 클래스
 public enum JWTValType {
     VALID_JWT,
     INVALID_JWT_SIGNATURE,

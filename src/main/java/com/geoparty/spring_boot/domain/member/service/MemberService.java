@@ -1,7 +1,7 @@
 package com.geoparty.spring_boot.domain.member.service;
 
-import com.geoparty.spring_boot.domain.member.dto.MemberDto;
+import com.geoparty.spring_boot.domain.member.dto.MemberResponse;
 
 public interface MemberService {
-    MemberDto getUserInfo(String accessToken);
+    MemberResponse getUserInfo(String accessToken);
 }

@@ -8,7 +8,7 @@ spring:
     database: mysql
     database-platform: org.hibernate.dialect.MySQL8Dialect
     hibernate:
-      ddl-auto: create
+      ddl-auto: update
     properties:
       hibernate:
         dialect: org.hibernate.dialect.MySQL8Dialect
@@ -36,8 +36,18 @@ jwt:
             authorization-grant-type: authorization_code
             client-name: kakao
             scope:
-              - profile
-              - account_email
+              - profile_nickname
               - profile_image
+#              - account_email
 
-
+cloud:
+  aws:
+    credentials:
+      accessKey: ${S3_ACCESS_KEY}
+      secretKey: ${S3_SECRET_KEY}
+    s3:
+      bucket: ${S3_BUCKET}
+    region:
+      static: ap-northeast-2
+    stack:
+      auto: false

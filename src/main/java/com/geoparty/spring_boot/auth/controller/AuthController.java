@@ -1,20 +1,23 @@
 package com.geoparty.spring_boot.auth.controller;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.geoparty.spring_boot.auth.dto.AuthReqDto;
 import com.geoparty.spring_boot.auth.dto.RefreshReqDto;
 import com.geoparty.spring_boot.auth.dto.SignInResponse;
 import com.geoparty.spring_boot.auth.service.AuthService;
-import com.geoparty.spring_boot.domain.member.dto.MemberDto;
-import com.geoparty.spring_boot.domain.member.service.MemberServiceImpl;
 import com.geoparty.spring_boot.global.exception.BaseException;
 import com.geoparty.spring_boot.global.exception.ErrorCode;
 import com.geoparty.spring_boot.security.jwt.JWTUtil;
+import com.geoparty.spring_boot.security.model.PrincipalDetails;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import com.geoparty.spring_boot.auth.vo.Token;
 import com.geoparty.spring_boot.security.jwt.JWTValType;
+import org.springframework.web.server.ResponseStatusException;
 
 
 @Slf4j
@@ -23,14 +26,13 @@ import com.geoparty.spring_boot.security.jwt.JWTValType;
 @RequestMapping("/api/auth")
 public class AuthController {
     private final AuthService authService;
-    private  final MemberServiceImpl memberService;
     private  final JWTUtil jwtUtil;
 
     @CrossOrigin(origins = "*")
     @PostMapping
-    public ResponseEntity<?> signIn(@RequestBody AuthReqDto accessToken ) {
+    public ResponseEntity<?> signIn(@RequestBody AuthReqDto accessToken ) throws JsonProcessingException {
 
-        String socialAccessToken = "Bearer " + accessToken.getAccessToken();// 카카오 엑세스 토큰
+        String socialAccessToken = accessToken.getAccessToken();// 카카오 엑세스 토큰
 
         log.info(accessToken.getAccessToken());
         //유저정보를 받아서 db에 저장
@@ -43,25 +45,23 @@ public class AuthController {
     }
 
     @GetMapping("/userInfo")
-    public ResponseEntity<?> getUserInfo(@RequestHeader("Authorization") String authorizationHeader ) {
-        // "Bearer " 부분 제거하고 순수한 토큰 값만 추출
-        String accessToken = authorizationHeader.replace("Bearer ", "");
+    public ResponseEntity<?> getUserInfo(@AuthenticationPrincipal PrincipalDetails memberDetails) {
+        // memberDetails가 null인지 확인하는 방어 코드 추가
+        if (memberDetails == null || memberDetails.getMember() == null) {
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "인증되지 않은 사용자입니다.");
+        }
 
-        MemberDto userData = memberService.getUserInfo(accessToken);
         return ResponseEntity.ok()
-                .body(userData);
+                .body(memberDetails.getMember());
     }
 
     @PostMapping("/logout")
-    public ResponseEntity<?> signOut(@RequestHeader("Authorization") String authorizationHeader) {
-
-        // "Bearer " 부분 제거하고 토큰 값만 추출
-        String accessToken = authorizationHeader.replace("Bearer ", "");
+    public ResponseEntity<?> signOut(@AuthenticationPrincipal PrincipalDetails memberDetails) {
 
         // 액세스 토큰이 있다면
-        if(accessToken != null){
-            int userId = jwtUtil.getUserFromJwt(accessToken);
-            authService.signOut(userId); // DB내 저장된 리프레시 토큰 삭제
+        if(memberDetails != null){
+            int memberId = memberDetails.getMember().getMemberId();
+            authService.signOut(memberId);
         }
 
         // 쿠키 만료 시키기
@@ -73,15 +73,13 @@ public class AuthController {
     }
 
     @DeleteMapping
-    public ResponseEntity<?> withdrawal(@RequestHeader("Authorization") String authorizationHeader) {
+    public ResponseEntity<?> withdrawal(@AuthenticationPrincipal PrincipalDetails memberDetails) {
 
-        // "Bearer " 부분 제거하고 토큰 값만 추출
-        String accessToken = authorizationHeader.replace("Bearer ", "");
 
         // 액세스 토큰이 있다면
-        if(accessToken != null){
-            int userId = jwtUtil.getUserFromJwt(accessToken);
-            authService.withdraw(userId);// DB내 저장된 리프레시 토큰 삭제
+        if(memberDetails != null){
+            Integer memberId = memberDetails.getMember().getMemberId();
+            authService.withdraw(memberId);//
         }
 
         // 쿠키 만료 시키기
@@ -101,7 +99,7 @@ public class AuthController {
             Token token = authService.refresh(refreshToken.getRefreshToken());
 
             return ResponseEntity.ok()
-                    .body(token); // body에는 새로 발급한 access,refresh token 넣는다.;
+                    .body(token.getRefreshToken()); // body에는 새로 발급한 access Token 반환;
         } else {
             // 유효하지 않은 토큰일 경우 401 에러 발생
             throw new BaseException(ErrorCode.UNAUTHORIZED);
