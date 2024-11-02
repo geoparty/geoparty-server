@@ -1,6 +1,6 @@
 package com.geoparty.spring_boot.domain.party.service;
 
-import com.geoparty.spring_boot.domain.member.dto.MemberDto;
+import com.geoparty.spring_boot.domain.member.dto.MemberResponse;
 import com.geoparty.spring_boot.domain.member.entity.Member;
 import com.geoparty.spring_boot.domain.member.repository.MemberRepository;
 import com.geoparty.spring_boot.domain.organization.entity.Organization;
@@ -53,7 +53,7 @@ public class PartyService {
     }
 
     public void validMember(Member member){
-        Member loginUser = memberRepository.findUserByUserId(member.getUserId())
+        Member loginUser = memberRepository.findUserByMemberId(member.getMemberId())
                 .orElseThrow(() -> new BaseException(ErrorCode.MEMBER_NOT_FOUND));
     }
 
@@ -95,10 +95,10 @@ public class PartyService {
         return PartyDetailResponse.from(PartyResponse.from(party, party.getOrganization()), toMemberResponse(party), toPaymentResponse(party));
     }
 
-    public List<MemberDto> toMemberResponse(Party party) {
+    public List<MemberResponse> toMemberResponse(Party party) {
         List<UserParty> members = userPartyRepository.findUserPartiesByParty(party);
         return members.stream()
-                .map(userParty -> MemberDto.from(userParty.getMember()))
+                .map(userParty -> MemberResponse.from(userParty.getMember()))
                 .collect(Collectors.toList());
     }
 
