@@ -29,7 +29,6 @@ public class PartyController {
     @Operation(description = "파티를 생성한다.") // to-do: 로그인한 유저 정보 반환하기
     public ResponseEntity<String> createParty(@RequestBody final PartyRequest request) {
         Member member = Member.builder() // 테스트용 멤버
-                .email("example@example.com")
                 .nickname("exampleNickname")
                 .userRefreshtoken("someRefreshToken")
                 .userIsWithdraw(false)
@@ -43,7 +42,7 @@ public class PartyController {
     @GetMapping("/home")
     @Operation(description = "홈화면에서 로그인한 유저의 파티 리스트를 반환한다.") // to-do: 로그인한 유저 정보 반환하기
     public ResponseEntity<List<PartyResponse>> getHomeParties(){
-        Member loginUser = memberRepository.findUserByUserId(2)
+        Member loginUser = memberRepository.findUserByMemberId(2)
                 .orElseThrow(() -> new BaseException(ErrorCode.MEMBER_NOT_FOUND));
         return ResponseEntity.status(HttpStatus.OK).body(partyService.getHomeParties(loginUser));
     }
