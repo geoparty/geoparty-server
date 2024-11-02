@@ -9,10 +9,12 @@ import com.geoparty.spring_boot.domain.party.entity.Party;
 import com.geoparty.spring_boot.domain.party.service.PartyService;
 import com.geoparty.spring_boot.global.exception.BaseException;
 import com.geoparty.spring_boot.global.exception.ErrorCode;
+import com.geoparty.spring_boot.security.model.PrincipalDetails;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -23,28 +25,26 @@ import java.util.List;
 public class PartyController {
 
     private final PartyService partyService;
-    private final MemberRepository memberRepository;
 
     @PostMapping
-    @Operation(description = "파티를 생성한다.") // to-do: 로그인한 유저 정보 반환하기
-    public ResponseEntity<String> createParty(@RequestBody final PartyRequest request) {
-        Member member = Member.builder() // 테스트용 멤버
-                .nickname("exampleNickname")
-                .userRefreshtoken("someRefreshToken")
-                .userIsWithdraw(false)
-                .socialId("socialId123")
-                .build();
-        memberRepository.save(member);
-        partyService.createParty(request, member);
+    @Operation(description = "파티를 생성한다.")
+    public ResponseEntity<String> createParty(@RequestBody final PartyRequest request,
+                                              @AuthenticationPrincipal final PrincipalDetails details) {
+//        Member member = Member.builder() // 테스트용 멤버
+//                .nickname("exampleNickname")
+//                .userRefreshtoken("someRefreshToken")
+//                .userIsWithdraw(false)
+//                .socialId("socialId123")
+//                .build();
+//        memberRepository.save(member);
+        partyService.createParty(request, details.getMember());
         return ResponseEntity.status(HttpStatus.CREATED).body("파티 생성이 완료되었습니다.");
     }
 
     @GetMapping("/home")
-    @Operation(description = "홈화면에서 로그인한 유저의 파티 리스트를 반환한다.") // to-do: 로그인한 유저 정보 반환하기
-    public ResponseEntity<List<PartyResponse>> getHomeParties(){
-        Member loginUser = memberRepository.findUserByMemberId(2)
-                .orElseThrow(() -> new BaseException(ErrorCode.MEMBER_NOT_FOUND));
-        return ResponseEntity.status(HttpStatus.OK).body(partyService.getHomeParties(loginUser));
+    @Operation(description = "홈화면에서 로그인한 유저의 파티 리스트를 반환한다.")
+    public ResponseEntity<List<PartyResponse>> getHomeParties(@AuthenticationPrincipal final PrincipalDetails details){
+        return ResponseEntity.status(HttpStatus.OK).body(partyService.getHomeParties(details.getMember()));
     }
 
     @GetMapping

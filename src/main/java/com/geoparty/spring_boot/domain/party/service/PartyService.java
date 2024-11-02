@@ -39,7 +39,7 @@ public class PartyService {
 
     @Transactional
     public void createParty(PartyRequest request, Member user) {
-//        validMember(user);
+        validMember(user);
         Party party = request.toEntity(user, countPartyMembers(request.getTargetPoint(), request.getPointPerPerson()));
         partyRepository.save(party);
         createUserParty(user, party);
@@ -53,7 +53,7 @@ public class PartyService {
     }
 
     public void validMember(Member member){
-        Member loginUser = memberRepository.findUserByMemberId(member.getMemberId())
+        memberRepository.findUserByMemberId(member.getMemberId())
                 .orElseThrow(() -> new BaseException(ErrorCode.MEMBER_NOT_FOUND));
     }
 
@@ -66,7 +66,7 @@ public class PartyService {
     }
 
     public List<PartyResponse> getHomeParties(Member loginMember) {
-//        validMember(loginMember);
+        validMember(loginMember);
         List<UserParty> parties = userPartyRepository.findUserPartiesByMember(loginMember);
         return parties.stream()
                 .map(userParty -> PartyResponse.from(userParty.getParty(), userParty.getParty().getOrganization()))
