@@ -15,6 +15,11 @@ spring:
         database-platform: org.hibernate.dialect.MySQL8Dialect
         format_sql: true
     show_sql: true
+
+  servlet:
+    multipart:
+      max-file-size: 10MB        # 단일 파일의 최대 크기
+      max-request-size: 50MB     # 전체 요청의 최대 크기
 # kakao login
 jwt:
   secret: ${JWT_SECRET_KEY}
