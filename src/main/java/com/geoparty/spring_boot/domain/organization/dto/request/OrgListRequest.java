@@ -9,8 +9,6 @@ import org.springframework.data.domain.Sort;
 @NoArgsConstructor
 @AllArgsConstructor
 public class OrgListRequest {
-    @Builder.Default
-    private String order = "orgId";
 
     @Builder.Default
     private Sort.Direction direction = Sort.Direction.DESC; // 정렬순서(내림차순)

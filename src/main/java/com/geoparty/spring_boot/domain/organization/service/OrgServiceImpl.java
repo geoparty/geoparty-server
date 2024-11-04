@@ -9,7 +9,7 @@ import com.geoparty.spring_boot.domain.organization.entity.Image;
 import com.geoparty.spring_boot.domain.organization.entity.Organization;
 import com.geoparty.spring_boot.domain.organization.repository.FileRepository;
 import com.geoparty.spring_boot.domain.organization.repository.ImageRepository;
-import com.geoparty.spring_boot.domain.organization.repository.OrgRepository;
+import com.geoparty.spring_boot.domain.organization.repository.OrganizationRepository;
 import com.geoparty.spring_boot.global.exception.ErrorCode;
 import com.geoparty.spring_boot.global.util.AWSS3Util;
 import lombok.RequiredArgsConstructor;
@@ -31,7 +31,7 @@ import java.util.Optional;
 @Transactional
 public class OrgServiceImpl implements OrgService {
 
-    private final OrgRepository orgRepository;
+    private final OrganizationRepository orgRepository;
     private final AWSS3Util s3Uploader;
     private final ImageRepository imageRepository;
     private final FileRepository fileRepository;
@@ -39,12 +39,12 @@ public class OrgServiceImpl implements OrgService {
 
     @Override
     @Transactional
-    public void createOrganization(OrgRequest request) {
+    public void createOrganization(OrgRequest request,MultipartFile thumbnail, List<MultipartFile> photos, MultipartFile pdf) {
         try {
             // 썸네일 이미지가 있을 경우 S3에 업로드
             String thumbnailUrl = null;
-            if (request.getThumbnail() != null) {
-                thumbnailUrl = s3Uploader.uploadFile(request.getThumbnail());
+            if (thumbnail != null) {
+                thumbnailUrl = s3Uploader.uploadFile(thumbnail);
             }
 
             // org 생성
@@ -53,15 +53,15 @@ public class OrgServiceImpl implements OrgService {
 
             // pdf file 업로드
             String fileUrl = null;
-            if (request.getPdfFile() != null) {
-                fileUrl = s3Uploader.uploadFile(request.getPdfFile());
+            if (pdf != null) {
+                fileUrl = s3Uploader.uploadFile(pdf);
             }
 
             File file = new File(fileUrl, org);
             fileRepository.save(file);
 
             // detailedPhotos 리스트 파일 업로드
-            uploadDetailedPhotos(request.getDetailedPhotos(), org);
+            uploadDetailedPhotos(photos, org);
 
 
         } catch (Exception e) {
@@ -88,29 +88,39 @@ public class OrgServiceImpl implements OrgService {
         }
     }
 
+//    @Override
+//    @Transactional(readOnly = true)
+//    public OrgListResponse getOrganizations(OrgListRequest request) {
+//        OrgListResponse response = null;
+//        try {
+//            Pageable pageable = PageRequest.of(request.getPageNum() - 1, //현재 페이지
+//                    request.getListNum(), // 페이지 당 개수
+//                    request.getDirection()); //내림차순
+//            Page<Organization> result = null;
+//
+//            result = orgRepository.findAll(pageable);
+//
+//            response = OrgListResponse.builder()
+//                    .orgs(result.getContent())
+//                    .pageNum(result.getNumber() + 1)
+//                    .length(result.getNumberOfElements())
+//                    .totalPage(result.getTotalPages())
+//                    .build();
+//
+//        } catch (Exception e) {
+//            throw new BaseException(ErrorCode.BAD_REQUEST);
+//        }
+//        return response;
+//    }
+
     @Override
     @Transactional(readOnly = true)
-    public OrgListResponse getOrganizations(OrgListRequest request) {
-        OrgListResponse response = null;
-        try {
-            Pageable pageable = PageRequest.of(request.getPageNum() - 1, //현재 페이지
-                    request.getListNum(), // 페이지 당 개수
-                    request.getDirection()); //내림차순
-            Page<Organization> result = null;
+    public OrgListResponse getOrganizations() {
+        List<Organization> orgs = orgRepository.findAll();
 
-            result = orgRepository.findAll(pageable);
-
-            response = OrgListResponse.builder()
-                    .orgs(result.getContent())
-                    .pageNum(result.getNumber() + 1)
-                    .length(result.getNumberOfElements())
-                    .totalPage(result.getTotalPages())
-                    .build();
-
-        } catch (Exception e) {
-            throw new BaseException(ErrorCode.BAD_REQUEST);
-        }
-        return response;
+        return OrgListResponse.builder()
+                .orgs(orgs)
+                .build();
     }
 
     @Override

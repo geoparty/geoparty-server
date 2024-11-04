@@ -9,9 +9,9 @@ import java.util.List;
 @Builder
 public class OrgListResponse {
     private List<OrgDTO> orgs;
-    private Integer pageNum;
-    private Integer length;
-    private Integer totalPage; // 전체 페이지
+//    private Integer pageNum;
+//    private Integer length;
+//    private Integer totalPage; // 전체 페이지
 
     @Getter
     @Setter

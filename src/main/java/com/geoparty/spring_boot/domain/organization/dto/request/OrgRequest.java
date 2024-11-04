@@ -16,9 +16,9 @@ public class OrgRequest {
     private String detail;
     private String mainAct;
     private Integer minDonation;
-    private MultipartFile thumbnail; // 대표 이미지
-    private List<MultipartFile> detailedPhotos; // 여러 개의 상세 이미지
-    private MultipartFile pdfFile; // 단체 상세 pdf
+//    private MultipartFile thumbnail; // 대표 이미지
+//    private List<MultipartFile> detailedPhotos; // 여러 개의 상세 이미지
+//    private MultipartFile pdfFile; // 단체 상세 pdf
 
     public Organization toEntity(String thumbnail) {
         return Organization.builder()
@@ -26,6 +26,7 @@ public class OrgRequest {
                 .summary(summary)
                 .detail(detail)
                 .mainAct(mainAct)
+                .minDonation(minDonation)
                 .thumbnail(thumbnail)
                 .build();
     }
