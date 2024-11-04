@@ -23,6 +23,9 @@ public class PartyResponse {
     @Schema(description = "환경단체 img url")
     private String imgUrl;
 
+    @Schema(description = "파티 id")
+    private Long partyId;
+
     @Schema(description = "파티 이름")
     private String title;
 
@@ -51,9 +54,10 @@ public class PartyResponse {
     private PartyType status;
 
     @Builder
-    public PartyResponse(String organization, String imgUrl, String title, String intro, LocalDateTime startDate, LocalDateTime payDate, Integer duration, Integer targetPoint, Integer totalPoint, Integer pointPerPerson, PartyType status) {
+    public PartyResponse(String organization, String imgUrl, Long partyId, String title, String intro, LocalDateTime startDate, LocalDateTime payDate, Integer duration, Integer targetPoint, Integer totalPoint, Integer pointPerPerson, PartyType status) {
         this.organization = organization;
         this.imgUrl = imgUrl;
+        this.partyId = partyId;
         this.title = title;
         this.intro = intro;
         this.startDate = startDate;
@@ -69,6 +73,7 @@ public class PartyResponse {
         return PartyResponse.builder()
                 .organization(organization.getTitle())
                 .imgUrl(organization.getThumbnail())
+                .partyId(party.getId())
                 .title(party.getTitle())
                 .intro(party.getIntro())
                 .payDate(party.getPayDate())
