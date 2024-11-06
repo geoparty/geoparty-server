@@ -1,22 +1,11 @@
 package com.geoparty.spring_boot.domain.organization.controller;
 
-import com.geoparty.spring_boot.domain.member.entity.Member;
-import com.geoparty.spring_boot.domain.organization.dto.request.OrgListRequest;
 import com.geoparty.spring_boot.domain.organization.dto.request.OrgRequest;
 import com.geoparty.spring_boot.domain.organization.dto.response.OrgListResponse;
 import com.geoparty.spring_boot.domain.organization.dto.response.OrgResponse;
 import com.geoparty.spring_boot.domain.organization.service.OrgService;
-import com.geoparty.spring_boot.global.exception.BaseException;
-import com.geoparty.spring_boot.global.exception.ErrorCode;
-import com.geoparty.spring_boot.security.jwt.JWTUtil;
 import io.swagger.v3.oas.annotations.Operation;
-import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
-import lombok.Value;
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
