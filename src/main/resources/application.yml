@@ -8,7 +8,7 @@ spring:
     database: mysql
     database-platform: org.hibernate.dialect.MySQL8Dialect
     hibernate:
-      ddl-auto: create
+      ddl-auto: update
     properties:
       hibernate:
         dialect: org.hibernate.dialect.MySQL8Dialect
@@ -20,6 +20,7 @@ spring:
     multipart:
       max-file-size: 10MB        # 단일 파일의 최대 크기
       max-request-size: 50MB     # 전체 요청의 최대 크기
+
 # kakao login
 jwt:
   secret: ${JWT_SECRET_KEY}
