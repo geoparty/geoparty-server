@@ -64,3 +64,7 @@ jobs:
             docker pull alpapago77/geoparty-server-api:latest
             docker pull alpapago77/geoparty-server-nginx:latest
             docker-compose up -d
+      - name: Send Discord Notification
+        run: |
+          curl -H "Content-Type: application/json" -X POST -d '{"content": "배포가 완료되었습니다!"}' ${{ secrets.DISCORD_WEBHOOK_URL }}
+        
