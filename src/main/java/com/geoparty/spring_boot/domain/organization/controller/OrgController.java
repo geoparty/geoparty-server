@@ -16,7 +16,6 @@ import java.util.List;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping(value = "/api/orgs")
-@CrossOrigin(origins = "*")
 public class OrgController {
 
     private final OrgService orgService;
