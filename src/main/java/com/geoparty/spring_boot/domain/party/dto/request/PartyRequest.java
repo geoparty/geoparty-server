@@ -18,9 +18,10 @@ public class PartyRequest {
     private String intro;
     private Integer targetPoint;
     private Integer pointPerPerson;
+    private Integer count;
     private Organization organization;
 
-    public Party toEntity(Member member, Integer count) {
+    public Party toEntity(Member member) {
         return Party.builder()
                 .host(member)
                 .title(title)

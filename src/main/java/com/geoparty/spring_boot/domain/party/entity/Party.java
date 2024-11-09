@@ -32,8 +32,8 @@ public class Party extends AuditingFields {
 
     private LocalDateTime payDate;
 
-    @Column(nullable = false)
-    private Integer totalPoint; // 실제 모인 포인트
+//    @Column(nullable = false)
+//    private Integer totalPoint; // 실제 모인 포인트
 
     @Column(nullable = false)
     private Integer targetPoint; // 후원 목표 포인트
@@ -58,10 +58,9 @@ public class Party extends AuditingFields {
     private Organization organization;
 
     @Builder
-    public Party(String title, String intro, Integer totalPoint, Integer targetPoint, Integer pointPerPerson, Integer count, Integer duration, PartyType status, Member host, Organization organization) {
+    public Party(String title, String intro, Integer targetPoint, Integer pointPerPerson, Integer count, Integer duration, PartyType status, Member host, Organization organization) {
         this.title = title;
         this.intro = intro;
-        this.totalPoint = 0;
         this.targetPoint = targetPoint;
         this.pointPerPerson = pointPerPerson;
         this.count = count;
