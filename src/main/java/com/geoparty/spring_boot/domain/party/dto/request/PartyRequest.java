@@ -3,12 +3,8 @@ package com.geoparty.spring_boot.domain.party.dto.request;
 import com.geoparty.spring_boot.domain.member.entity.Member;
 import com.geoparty.spring_boot.domain.organization.entity.Organization;
 import com.geoparty.spring_boot.domain.party.entity.Party;
-import com.geoparty.spring_boot.domain.party.entity.PartyType;
-import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-
-import java.time.LocalDateTime;
 
 @NoArgsConstructor
 @Getter
@@ -18,7 +14,7 @@ public class PartyRequest {
     private String intro;
     private Integer targetPoint;
     private Integer pointPerPerson;
-    private Integer count;
+    private Integer size;
     private Organization organization;
 
     public Party toEntity(Member member) {
@@ -28,7 +24,7 @@ public class PartyRequest {
                 .intro(intro)
                 .targetPoint(targetPoint)
                 .pointPerPerson(pointPerPerson)
-                .count(count)
+                .size(size)
                 .organization(organization)
                 .build();
     }

@@ -42,7 +42,7 @@ public class Party extends AuditingFields {
     private Integer pointPerPerson; // 1인당 후원 포인트
 
     @Column(nullable = false)
-    private Integer count; // 파티 멤버 수
+    private Integer size; // 파티 멤버 정원
 
     private Integer duration; // 결제 지속 개월수
 
@@ -58,12 +58,12 @@ public class Party extends AuditingFields {
     private Organization organization;
 
     @Builder
-    public Party(String title, String intro, Integer targetPoint, Integer pointPerPerson, Integer count, Integer duration, PartyType status, Member host, Organization organization) {
+    public Party(String title, String intro, Integer targetPoint, Integer pointPerPerson, Integer size, Integer duration, PartyType status, Member host, Organization organization) {
         this.title = title;
         this.intro = intro;
         this.targetPoint = targetPoint;
         this.pointPerPerson = pointPerPerson;
-        this.count = count;
+        this.size = size;
         this.duration = 0;
         this.status = PENDING;
         this.host = host;
