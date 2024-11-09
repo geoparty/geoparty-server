@@ -28,7 +28,6 @@ public class AuthController {
     private final AuthService authService;
     private  final JWTUtil jwtUtil;
 
-    @CrossOrigin(origins = "*")
     @PostMapping
     public ResponseEntity<?> signIn(@RequestBody AuthReqDto accessToken ) throws JsonProcessingException {
 
