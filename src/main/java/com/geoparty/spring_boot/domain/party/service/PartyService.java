@@ -40,7 +40,7 @@ public class PartyService {
     @Transactional
     public void createParty(PartyRequest request, Member user) {
         validMember(user);
-        Party party = request.toEntity(user, countPartyMembers(request.getTargetPoint(), request.getPointPerPerson()));
+        Party party = request.toEntity(user);
         partyRepository.save(party);
         createUserParty(user, party);
     }

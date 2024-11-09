@@ -44,8 +44,8 @@ public class PartyResponse {
     @Schema(description = "목표 후원 포인트")
     private Integer targetPoint;
 
-    @Schema(description = "실제 모인 포인트")
-    private Integer totalPoint;
+    @Schema(description = "파티원 수")
+    private Integer size;
 
     @Schema(description = "1인당 후원 금액")
     private Integer pointPerPerson;
@@ -54,7 +54,7 @@ public class PartyResponse {
     private PartyType status;
 
     @Builder
-    public PartyResponse(String organization, String imgUrl, Long partyId, String title, String intro, LocalDateTime startDate, LocalDateTime payDate, Integer duration, Integer targetPoint, Integer totalPoint, Integer pointPerPerson, PartyType status) {
+    public PartyResponse(String organization, String imgUrl, Long partyId, String title, String intro, LocalDateTime startDate, LocalDateTime payDate, Integer duration, Integer targetPoint, Integer size, Integer pointPerPerson, PartyType status) {
         this.organization = organization;
         this.imgUrl = imgUrl;
         this.partyId = partyId;
@@ -64,7 +64,7 @@ public class PartyResponse {
         this.payDate = payDate;
         this.duration = duration;
         this.targetPoint = targetPoint;
-        this.totalPoint = totalPoint;
+        this.size = size;
         this.pointPerPerson = pointPerPerson;
         this.status = status;
     }
@@ -80,7 +80,7 @@ public class PartyResponse {
                 .startDate(party.getCreatedAt())
                 .duration(party.getDuration())
                 .targetPoint(party.getTargetPoint())
-                .totalPoint(party.getTotalPoint())
+                .size(party.getSize())
                 .pointPerPerson(party.getPointPerPerson())
                 .status(party.getStatus())
                 .build();
