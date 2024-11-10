@@ -1,14 +1,19 @@
 package com.geoparty.spring_boot.domain.payment.entity;
 
+import com.geoparty.spring_boot.domain.member.entity.Member;
 import com.geoparty.spring_boot.domain.organization.entity.Organization;
 import com.geoparty.spring_boot.domain.party.entity.Party;
+import com.geoparty.spring_boot.domain.party.entity.PartyType;
 import com.geoparty.spring_boot.global.domain.AuditingFields;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
+
+import static com.geoparty.spring_boot.domain.party.entity.PartyType.PENDING;
 
 @Entity
 @Getter
@@ -25,4 +30,14 @@ public class Payment extends AuditingFields {
 
     @Column(nullable = false)
     private Integer amount;
+
+    @Column(nullable = false)
+    private boolean mailed;
+
+    @Builder
+    public Payment(Party party, Integer amount, boolean mailed) {
+        this.party = party;
+        this.amount = amount;
+        this.mailed = false;
+    }
 }
