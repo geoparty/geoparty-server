@@ -26,9 +26,12 @@ public class UserParty extends AuditingFields {
     @JoinColumn(name = "party_id", nullable = false)
     private Party party;
 
+    private boolean isWithdrawn;
+
     @Builder
-    public UserParty(Member member, Party party) {
+    public UserParty(Member member, Party party, boolean isWithdrawn) {
         this.member = member;
         this.party = party;
+        this.isWithdrawn = false;
     }
 }

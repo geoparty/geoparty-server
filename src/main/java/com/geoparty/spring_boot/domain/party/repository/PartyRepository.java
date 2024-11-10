@@ -6,6 +6,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
+import java.time.LocalDate;
 import java.util.List;
 
 public interface PartyRepository extends JpaRepository<Party, Long> {
@@ -14,4 +15,5 @@ public interface PartyRepository extends JpaRepository<Party, Long> {
                     "JOIN FETCH p.organization " +
                     "WHERE p.title LIKE %:title%")
     List<Party> findByTitle(@Param("title") String title);
+    List<Party> findByPayDate(LocalDate payDate);
 }

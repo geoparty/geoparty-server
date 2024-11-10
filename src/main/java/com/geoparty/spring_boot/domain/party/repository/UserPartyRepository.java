@@ -21,4 +21,10 @@ public interface UserPartyRepository extends JpaRepository<UserParty, Long> {
             "JOIN FETCH up.member m " +
             "WHERE p = :party")
     List<UserParty> findUserPartiesByParty(@Param("party") Party party);
+
+    @Query("SELECT COUNT(up) FROM UserParty up " +
+            "WHERE up.party = :party AND up.isWithdrawn = false")
+    Integer countUserPartiesByParty(@Param("party") Party party);
+
+    boolean existsByMemberAndParty(Member member, Party party);
 }

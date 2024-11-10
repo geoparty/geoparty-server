@@ -9,9 +9,9 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 
-import static com.geoparty.spring_boot.domain.party.entity.PartyType.PENDING;
+import static com.geoparty.spring_boot.domain.party.entity.PartyType.A;
 
 @Entity
 @Getter
@@ -30,7 +30,7 @@ public class Party extends AuditingFields {
 
 //    private String imgUrl;
 
-    private LocalDateTime payDate;
+    private LocalDate payDate;
 
 //    @Column(nullable = false)
 //    private Integer totalPoint; // 실제 모인 포인트
@@ -65,8 +65,29 @@ public class Party extends AuditingFields {
         this.pointPerPerson = pointPerPerson;
         this.size = size;
         this.duration = 0;
-        this.status = PENDING;
+        this.status = A;
         this.host = host;
         this.organization = organization;
+    }
+
+    public void updatePartyType(final PartyType status) {
+        this.status = status;
+    }
+
+    public void updateDuration() {
+        this.duration += 1;
+    }
+
+    public void resetPayDate() {
+        this.payDate = null;
+    }
+
+
+    public void updatePayDate() {
+        this.payDate = LocalDate.now().plusMonths(1);
+    }
+
+    public void extendPayDate() {
+        this.payDate = LocalDate.now().plusDays(3);
     }
 }
