@@ -12,6 +12,8 @@ import java.util.Collections;
 @Data
 @Builder
 public class MemberResponse {
+
+    private Integer memberId;
     private String nickName;
     private String thumbnailImageUrl;
     private String userRefreshtoken;
@@ -21,6 +23,7 @@ public class MemberResponse {
 
     public static MemberResponse from(Member entity) {
         return new MemberResponse(
+                entity.getMemberId(),
                 entity.getNickname(),
                 entity.getThumbnailImageUrl(),
                 entity.getUserRefreshtoken(),
