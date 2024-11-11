@@ -10,8 +10,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
-
-import static com.geoparty.spring_boot.domain.party.entity.PartyType.A;
+import static com.geoparty.spring_boot.domain.party.entity.PartyType.AC;
 
 @Entity
 @Getter
@@ -65,7 +64,7 @@ public class Party extends AuditingFields {
         this.pointPerPerson = pointPerPerson;
         this.size = size;
         this.duration = 0;
-        this.status = A;
+        this.status = AC;
         this.host = host;
         this.organization = organization;
     }
@@ -79,7 +78,7 @@ public class Party extends AuditingFields {
     }
 
     public void resetPayDate() {
-        this.payDate = null;
+        this.payDate = LocalDate.now().minusMonths(1);
     }
 
 

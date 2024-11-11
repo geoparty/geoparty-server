@@ -119,7 +119,7 @@ public class PartyService {
         } else { // 유저 포인트 불만족
             if (!Objects.equals(count, party.getSize())) {
                 party.resetPayDate();
-                party.updatePartyType(PartyType.C);
+                party.updatePartyType(PartyType.AC);
                 log.info("파티 타입 C로 변경");
             } else { // TYPE D) 멤버 중에 포인트 미달이 있어서 정기 결제를 하다가 중지된 상태
                 party.updatePartyType(PartyType.D);
