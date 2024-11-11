@@ -10,7 +10,9 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
-import static com.geoparty.spring_boot.domain.party.entity.PartyType.AC;
+
+import static com.geoparty.spring_boot.domain.party.entity.PartyType.A;
+import static com.geoparty.spring_boot.domain.party.entity.PartyType.C;
 
 @Entity
 @Getter
@@ -64,7 +66,7 @@ public class Party extends AuditingFields {
         this.pointPerPerson = pointPerPerson;
         this.size = size;
         this.duration = 0;
-        this.status = AC;
+        this.status = A;
         this.host = host;
         this.organization = organization;
     }
