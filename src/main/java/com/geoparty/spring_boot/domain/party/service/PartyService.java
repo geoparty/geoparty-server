@@ -7,6 +7,7 @@ import com.geoparty.spring_boot.domain.organization.entity.Organization;
 import com.geoparty.spring_boot.domain.organization.repository.OrganizationRepository;
 import com.geoparty.spring_boot.domain.party.dto.request.PartyRequest;
 import com.geoparty.spring_boot.domain.party.dto.response.PartyDetailResponse;
+import com.geoparty.spring_boot.domain.party.dto.response.PartyIdResponse;
 import com.geoparty.spring_boot.domain.party.dto.response.PartyResponse;
 import com.geoparty.spring_boot.domain.party.entity.Party;
 import com.geoparty.spring_boot.domain.party.entity.PartyType;
@@ -45,11 +46,13 @@ public class PartyService {
     private final UserPaymentRepository userPaymentRepository;
 
     @Transactional
-    public void createParty(PartyRequest request, Member user) {
+    public PartyIdResponse createParty(PartyRequest request, Member user) {
         validMember(user);
         Party party = request.toEntity(user);
         partyRepository.save(party);
         createUserParty(user, party);
+
+        return new PartyIdResponse(party.getId());
     }
 
     public Integer countPartyMembers(Integer targetPoint, Integer pointPerPerson){

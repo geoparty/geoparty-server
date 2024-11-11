@@ -4,6 +4,7 @@ import com.geoparty.spring_boot.domain.member.entity.Member;
 import com.geoparty.spring_boot.domain.member.repository.MemberRepository;
 import com.geoparty.spring_boot.domain.party.dto.request.PartyRequest;
 import com.geoparty.spring_boot.domain.party.dto.response.PartyDetailResponse;
+import com.geoparty.spring_boot.domain.party.dto.response.PartyIdResponse;
 import com.geoparty.spring_boot.domain.party.dto.response.PartyResponse;
 import com.geoparty.spring_boot.domain.party.entity.Party;
 import com.geoparty.spring_boot.domain.party.repository.PartyRepository;
@@ -31,8 +32,8 @@ public class PartyController {
 
     @PostMapping
     @Operation(description = "파티를 생성한다.")
-    public ResponseEntity<String> createParty(@RequestBody final PartyRequest request,
-                                              @AuthenticationPrincipal final PrincipalDetails details) {
+    public ResponseEntity<PartyIdResponse> createParty(@RequestBody final PartyRequest request,
+                                                       @AuthenticationPrincipal final PrincipalDetails details) {
 //        Member member = Member.builder() // 테스트용 멤버
 //                .nickname("exampleNickname")
 //                .userRefreshtoken("someRefreshToken")
@@ -40,8 +41,7 @@ public class PartyController {
 //                .socialId("socialId123")
 //                .build();
 //        memberRepository.save(member);
-        partyService.createParty(request, details.getMember());
-        return ResponseEntity.status(HttpStatus.CREATED).body("파티 생성이 완료되었습니다.");
+        return ResponseEntity.status(HttpStatus.CREATED).body(partyService.createParty(request, details.getMember()));
     }
 
     @GetMapping("/home")
