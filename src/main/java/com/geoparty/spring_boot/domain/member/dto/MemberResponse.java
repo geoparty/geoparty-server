@@ -14,9 +14,9 @@ import java.util.Collections;
 public class MemberResponse {
 
     private Integer memberId;
+    private String email;
     private String nickName;
     private String thumbnailImageUrl;
-    private String userRefreshtoken;
     private LocalDateTime createdAt;
     private LocalDateTime modifiedAt;
 
@@ -24,9 +24,9 @@ public class MemberResponse {
     public static MemberResponse from(Member entity) {
         return new MemberResponse(
                 entity.getMemberId(),
+                entity.getEmail(),
                 entity.getNickname(),
                 entity.getThumbnailImageUrl(),
-                entity.getUserRefreshtoken(),
                 entity.getCreatedAt(),
                 entity.getModifiedAt()
         );

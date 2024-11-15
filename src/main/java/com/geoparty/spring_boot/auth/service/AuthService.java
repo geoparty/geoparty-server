@@ -31,7 +31,7 @@ public class AuthService {
     private final JWTUtil JWTUtil;
     private final MemberRepository memberRepository;
     private final KakaoService kakaoService;
-    private final TokenProvider tokenProvider;
+//    private final TokenProvider tokenProvider;
 
     // 로그인(유저 정보 없다면 db에 저장하고 데이터 반환)
     @Transactional
@@ -60,6 +60,7 @@ public class AuthService {
 
         Member user = Member.builder()
                 .socialId(userData.getSocialId())
+                .email(userData.getEmail())
                 .nickname(userData.getNickName())
                 .thumbnailImageUrl(userData.getProfileImage())
                 .userIsWithdraw(false)
