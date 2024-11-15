@@ -4,9 +4,10 @@ import lombok.Getter;
 
 @Getter
 public enum PartyType {
-    PENDING("대기중"),
-    PROGRESS("정기 결제 시작"),
-    HALTED("정기 결제 중단");
+    A("초기화, 결제 대기중"),
+    B("정상적으로 정기 결제 중"),
+    C("초기 결제 대기중 or 멤버 부족으로 정기 결제 중단, 대기중"),
+    D("포인트 미달로 정기 결제 중단");
 
     private final String value;
 

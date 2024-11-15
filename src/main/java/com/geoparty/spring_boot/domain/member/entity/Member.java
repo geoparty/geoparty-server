@@ -61,4 +61,8 @@ public class Member extends AuditingFields {
         this.userRefreshtoken = null;
     }
 
+    public void minusPoint(Integer value) {
+        this.point -= value;
+    }
+
 }

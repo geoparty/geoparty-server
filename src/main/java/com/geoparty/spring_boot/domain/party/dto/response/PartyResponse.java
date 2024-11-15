@@ -10,6 +10,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -36,7 +37,7 @@ public class PartyResponse {
     private LocalDateTime startDate;
 
     @Schema(description = "결제 예정 날짜")
-    private LocalDateTime payDate;
+    private LocalDate payDate;
 
     @Schema(description = "결제 지속 개월수")
     private Integer duration;
@@ -54,7 +55,7 @@ public class PartyResponse {
     private PartyType status;
 
     @Builder
-    public PartyResponse(String organization, String imgUrl, Long partyId, String title, String intro, LocalDateTime startDate, LocalDateTime payDate, Integer duration, Integer targetPoint, Integer size, Integer pointPerPerson, PartyType status) {
+    public PartyResponse(String organization, String imgUrl, Long partyId, String title, String intro, LocalDateTime startDate, LocalDate payDate, Integer duration, Integer targetPoint, Integer size, Integer pointPerPerson, PartyType status) {
         this.organization = organization;
         this.imgUrl = imgUrl;
         this.partyId = partyId;

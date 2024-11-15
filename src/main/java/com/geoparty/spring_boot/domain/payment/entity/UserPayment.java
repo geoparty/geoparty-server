@@ -1,7 +1,7 @@
-package com.geoparty.spring_boot.domain.party.entity;
+package com.geoparty.spring_boot.domain.payment.entity;
 
 import com.geoparty.spring_boot.domain.member.entity.Member;
-import com.geoparty.spring_boot.domain.organization.entity.Organization;
+import com.geoparty.spring_boot.domain.party.entity.Party;
 import com.geoparty.spring_boot.global.domain.AuditingFields;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
@@ -12,26 +12,27 @@ import lombok.NoArgsConstructor;
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class UserParty extends AuditingFields {
+public class UserPayment extends AuditingFields {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "user_party_id")
+    @Column(name = "user_payment_id")
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id", nullable = false)
+    @JoinColumn(name = "member_id", nullable = false)
     private Member member;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "party_id", nullable = false)
     private Party party;
 
-    private boolean isWithdrawn;
+    @Column(nullable = false)
+    private Integer amount;
 
     @Builder
-    public UserParty(Member member, Party party, boolean isWithdrawn) {
+    public UserPayment(Member member, Party party, Integer amount) {
         this.member = member;
         this.party = party;
-        this.isWithdrawn = false;
+        this.amount = amount;
     }
 }
