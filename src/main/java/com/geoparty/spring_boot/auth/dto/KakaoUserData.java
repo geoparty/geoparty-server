@@ -14,11 +14,14 @@ import java.util.Map;
 @Builder
 public class KakaoUserData {
     String socialId;
+    String email;
     String nickName;
     String profileImage;
 
-    public void setUserData(Map<String,Object> userData){ // Json 데이터를 매핑해주는 함수
+    public void setUserData(Map<String,Object> userData){
         socialId = userData.get("id").toString();
+        email = userData.get("email").toString();
+
         ObjectMapper om = new ObjectMapper();
         Map profileData = om.convertValue(userData.get("profile"), Map.class);
         nickName = profileData.get("nickname").toString();

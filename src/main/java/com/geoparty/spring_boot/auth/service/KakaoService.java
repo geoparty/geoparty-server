@@ -75,6 +75,11 @@ public class KakaoService {
                 userInfo.put("id", jsonNode.get("id").asText());
             }
 
+            // 이메일 주소 담기
+            if(jsonNode.has("kakao_account") && jsonNode.get("kakao_account").has("email")) {
+                userInfo.put("email", jsonNode.get("kakao_account").get("email").asText());
+            }
+
             // profile 데이터를 별도의 Map으로 저장
             Map<String, String> profileData = new HashMap<>();
             if (jsonNode.has("kakao_account") && jsonNode.get("kakao_account").has("profile")) {
