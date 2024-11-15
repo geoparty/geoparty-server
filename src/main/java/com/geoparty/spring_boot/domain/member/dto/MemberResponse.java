@@ -15,6 +15,7 @@ public class MemberResponse {
 
     private Integer memberId;
     private String nickName;
+//    private String email;
     private String thumbnailImageUrl;
     private String userRefreshtoken;
     private LocalDateTime createdAt;

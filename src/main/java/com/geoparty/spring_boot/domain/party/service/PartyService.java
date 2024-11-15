@@ -204,6 +204,13 @@ public class PartyService {
                 .collect(Collectors.toList());
     }
 
+    public List<PartyResponse> getAllParties() {
+        List<Party> parties = partyRepository.findAll();
+        return parties.stream()
+                .map(party -> PartyResponse.from(party, party.getOrganization()))
+                .collect(Collectors.toList());
+    }
+
     public PartyDetailResponse getPartyDetails(Long partyId) {
         Party party = partyRepository.findById(partyId)
                 .orElseThrow(() -> new BaseException(ErrorCode.PARTY_NOT_FOUND));
@@ -221,6 +228,13 @@ public class PartyService {
         List<Payment> payments = paymentRepository.findAllByPartyId(party.getId());
         return payments.stream()
                 .map(payment -> PaymentResponse.from(payment))
+                .collect(Collectors.toList());
+    }
+
+    public List<UserPaymentResponse> getPaymentsByMember(Member member) {
+        List<UserPayment> payments = userPaymentRepository.findAllByMember(member);
+        return payments.stream()
+                .map(payment -> UserPaymentResponse.from(payment))
                 .collect(Collectors.toList());
     }
 

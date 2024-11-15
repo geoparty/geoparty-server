@@ -92,4 +92,18 @@ public class PartyController {
         return ResponseEntity.status(HttpStatus.CREATED).body("정기결제일 테스트가 완료되었습니다.");
     }
 
+    @GetMapping("/admin")
+    @Operation(description = "어드민페이지에서 모든 파티 리스트를 반환한다.")
+    public ResponseEntity<List<PartyResponse>> getAllParties() {
+            return ResponseEntity.status(HttpStatus.OK).body(partyService.getAllParties());
+    }
+
+    @GetMapping("/admin/{member-id}")
+    @Operation(description = "어드민페이지에서 해당 유저가 속한 모든 파티 리스트를 반환한다.")
+    public ResponseEntity<List<PartyResponse>> getAdminParties(@PathVariable(name = "member-id") Long memberId){
+        Member member = memberRepository.findUserByMemberId(Math.toIntExact(memberId))
+                .orElseThrow(() -> new BaseException(ErrorCode.MEMBER_NOT_FOUND));
+        return ResponseEntity.status(HttpStatus.OK).body(partyService.getHomeParties(member));
+    }
+
 }
