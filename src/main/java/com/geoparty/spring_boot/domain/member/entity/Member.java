@@ -40,11 +40,14 @@ public class Member extends AuditingFields {
     @Setter @Column(length = 500)
     private String thumbnailImageUrl;
 
+    @Setter @Column private String email;
+
     protected Member() {}
 
     @Builder
-    private Member(Integer memberId, String nickname, String userRefreshtoken, boolean userIsWithdraw, String socialId, Integer point, String thumbnailImageUrl ) {
+    private Member(Integer memberId, String email, String nickname, String userRefreshtoken, boolean userIsWithdraw, String socialId, Integer point, String thumbnailImageUrl ) {
         this.memberId = memberId;
+        this.email = email;
         this.nickname = nickname;
         this.userRefreshtoken = userRefreshtoken;
         this.userIsWithdraw = userIsWithdraw;
