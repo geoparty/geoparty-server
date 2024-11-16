@@ -34,4 +34,8 @@ public class UserParty extends AuditingFields {
         this.party = party;
         this.isWithdrawn = false;
     }
+
+    public void withdrawnMember() {
+        this.isWithdrawn = true;
+    }
 }

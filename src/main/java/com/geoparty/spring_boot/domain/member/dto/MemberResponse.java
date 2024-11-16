@@ -16,6 +16,7 @@ public class MemberResponse {
     private Integer memberId;
     private String email;
     private String nickName;
+//    private String email;
     private String thumbnailImageUrl;
     private LocalDateTime createdAt;
     private LocalDateTime modifiedAt;

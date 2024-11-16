@@ -15,6 +15,7 @@ import com.geoparty.spring_boot.domain.party.entity.UserParty;
 import com.geoparty.spring_boot.domain.party.repository.PartyRepository;
 import com.geoparty.spring_boot.domain.party.repository.UserPartyRepository;
 import com.geoparty.spring_boot.domain.payment.dto.response.PaymentResponse;
+import com.geoparty.spring_boot.domain.payment.dto.response.UserPaymentResponse;
 import com.geoparty.spring_boot.domain.payment.entity.Payment;
 import com.geoparty.spring_boot.domain.payment.entity.UserPayment;
 import com.geoparty.spring_boot.domain.payment.repository.PaymentRepository;
@@ -124,12 +125,34 @@ public class PartyService {
                     log.info("파티 타입 C로 변경");
                 }
             } else { // TYPE D) 멤버 중에 포인트 미달이 있어서 정기 결제를 하다가 중지된 상태
-                party.updatePartyType(PartyType.D);
-                party.extendPayDate();
-                log.info("파티 타입 D로 변경");
+                if (party.getStatus() == PartyType.D){
+                    withdrawnMembers(party);
+                } else {
+                    party.updatePartyType(PartyType.D);
+                    party.extendPayDate();
+                    log.info("파티 타입 D로 변경");
                 }
             }
         }
+    }
+
+    // 포인트 적은 멤버들 강퇴시키고, type c로 변경하기
+    public void withdrawnMembers(Party party){
+        List<UserParty> userParties = userPartyRepository.findUserPartiesByParty(party);
+        Integer requiredPoints = party.getPointPerPerson();
+
+        for (UserParty userParty : userParties) {
+            Member member = userParty.getMember();
+            if (member.getPoint() < requiredPoints) {
+                userPartyRepository.delete(userParty);
+                log.info("member id: " + member.getMemberId() + "가 강퇴되었습니다.");
+            }
+        }
+
+        party.resetPayDate();
+        party.updatePartyType(PartyType.C);
+        log.info("파티 타입 C로 변경");
+    }
 
     public boolean hasEnoughPoints(Party party) {
         List<UserParty> userParties = userPartyRepository.findUserPartiesByParty(party);
@@ -204,6 +227,13 @@ public class PartyService {
                 .collect(Collectors.toList());
     }
 
+    public List<PartyResponse> getAllParties() {
+        List<Party> parties = partyRepository.findAll();
+        return parties.stream()
+                .map(party -> PartyResponse.from(party, party.getOrganization()))
+                .collect(Collectors.toList());
+    }
+
     public PartyDetailResponse getPartyDetails(Long partyId) {
         Party party = partyRepository.findById(partyId)
                 .orElseThrow(() -> new BaseException(ErrorCode.PARTY_NOT_FOUND));
@@ -221,6 +251,13 @@ public class PartyService {
         List<Payment> payments = paymentRepository.findAllByPartyId(party.getId());
         return payments.stream()
                 .map(payment -> PaymentResponse.from(payment))
+                .collect(Collectors.toList());
+    }
+
+    public List<UserPaymentResponse> getPaymentsByMember(Member member) {
+        List<UserPayment> payments = userPaymentRepository.findAllByMember(member);
+        return payments.stream()
+                .map(payment -> UserPaymentResponse.from(payment))
                 .collect(Collectors.toList());
     }
 
