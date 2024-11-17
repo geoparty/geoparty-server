@@ -24,11 +24,9 @@ public class FirebaseService {
     public String sendFCMMessage(String targetToken, String title, String body) {
         Message message = Message.builder()
                 .setToken(targetToken)
-                .setNotification(Notification.builder()
-                        .setTitle(title)
-                        .setBody(body)
-                        .build())
+                .setNotification(new Notification(title, body))
                 .build();
+
         try {
             String response = FirebaseMessaging.getInstance().send(message);
             return "Message sent successfully: " + response;
