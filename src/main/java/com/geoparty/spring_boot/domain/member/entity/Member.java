@@ -42,6 +42,8 @@ public class Member extends AuditingFields {
 
     @Setter @Column private String email;
 
+    private String targetToken;
+
     protected Member() {}
 
     @Builder
@@ -66,6 +68,10 @@ public class Member extends AuditingFields {
 
     public void minusPoint(Integer value) {
         this.point -= value;
+    }
+
+    public void updateTargetToken(String token) {
+        this.targetToken = token;
     }
 
 }
