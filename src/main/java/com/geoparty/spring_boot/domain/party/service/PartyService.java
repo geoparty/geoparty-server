@@ -1,5 +1,6 @@
 package com.geoparty.spring_boot.domain.party.service;
 
+import com.geoparty.spring_boot.domain.alarm.service.FirebaseService;
 import com.geoparty.spring_boot.domain.member.dto.MemberResponse;
 import com.geoparty.spring_boot.domain.member.entity.Member;
 import com.geoparty.spring_boot.domain.member.repository.MemberRepository;
@@ -29,6 +30,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
@@ -45,6 +48,7 @@ public class PartyService {
     private final OrganizationRepository organizationRepository;
     private final PaymentRepository paymentRepository;
     private final UserPaymentRepository userPaymentRepository;
+    private final FirebaseService firebaseService;
 
     @Transactional
     public PartyIdResponse createParty(PartyRequest request, Member user) {
@@ -116,12 +120,18 @@ public class PartyService {
             party.updatePartyType(PartyType.B);
             party.updateDuration();
             party.updatePayDate();
+
+            String content = String.format("'%s' 파티에서 후원이 진행되어 포인트가 차감되었습니다.", party.getTitle());
+            alarmToAllPartyMembers(party, "파티 후원 진행", content);
             log.info("파티 타입 B로 변경");
         } else { // 유저 포인트 불만족
             if (!Objects.equals(count, party.getSize())) {
                 if (party.getPayDate() != null){
                     party.resetPayDate();
                     party.updatePartyType(PartyType.C);
+
+                    String content = String.format("회원 수가 부족해서 '%s' 파티의 후원이 중지되었습니다.", party.getTitle());
+                    alarmToAllPartyMembers(party, "파티 후원 중지", content);
                     log.info("파티 타입 C로 변경");
                 }
             } else { // TYPE D) 멤버 중에 포인트 미달이 있어서 정기 결제를 하다가 중지된 상태
@@ -130,11 +140,54 @@ public class PartyService {
                 } else {
                     party.updatePartyType(PartyType.D);
                     party.extendPayDate();
+                    alarmToAllPartyTypeDMembers(party);
                     log.info("파티 타입 D로 변경");
                 }
             }
         }
     }
+
+    public void alarmToAllPartyTypeDMembers(Party party){
+        List<UserParty> userParties = userPartyRepository.findUserPartiesByParty(party);
+        Integer requiredPoints = party.getPointPerPerson();
+        List<String> members = new ArrayList<>();
+
+        // 날짜 포맷 설정
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy년 MM월 dd일");
+        String payDate = party.getPayDate().format(formatter);
+
+
+        for (UserParty userParty : userParties) {
+            Member member = userParty.getMember();
+            if (member.getPoint() < requiredPoints) {
+                members.add(member.getNickname());
+                String content = String.format(
+                        "포인트가 부족해서 '%s' 파티 결제가 중지되었습니다. %s까지 충전하지 않으면 해당 파티에서 강제퇴장됩니다.",
+                        party.getTitle(),
+                        payDate
+                );
+                firebaseService.sendFCMMessage(member.getTargetToken(), "포인트 부족 경고", content);
+            }
+        }
+
+        String memberNames = String.join(", ", members);
+        String content = String.format(
+                "멤버 %s의 포인트가 부족해서 '%s' 파티 결제가 중지되었습니다. 결제일이 %s로 변경되었습니다.",
+                memberNames,
+                party.getTitle(),
+                payDate
+        );
+        alarmToAllPartyMembers(party, "파티 후원 중지", content);
+    }
+    
+    public void alarmToAllPartyMembers(Party party, String title, String content){
+        List<UserParty> userParties = userPartyRepository.findUserPartiesByParty(party);
+        for (UserParty userParty : userParties) {
+            Member member = userParty.getMember();
+            firebaseService.sendFCMMessage(member.getTargetToken(), title, content);
+            log.info("파티 멤버들에게 알림이 전송되었습니다.");
+            }
+        }
 
     // 포인트 적은 멤버들 강퇴시키고, type c로 변경하기
     public void withdrawnMembers(Party party){
@@ -144,6 +197,8 @@ public class PartyService {
         for (UserParty userParty : userParties) {
             Member member = userParty.getMember();
             if (member.getPoint() < requiredPoints) {
+                String content = String.format("포인트를 충전하지 않아서 멤버 '%s'가 '%s' 파티에서 강제퇴장되었습니다.", member.getNickname(), party.getTitle());
+                alarmToAllPartyMembers(party, "파티 강제 퇴장", content);
                 userPartyRepository.delete(userParty);
                 log.info("member id: " + member.getMemberId() + "가 강퇴되었습니다.");
             }
@@ -151,6 +206,8 @@ public class PartyService {
 
         party.resetPayDate();
         party.updatePartyType(PartyType.C);
+        String content = String.format("회원 수가 부족해서 '%s' 파티의 후원이 중지되었습니다.", party.getTitle());
+        alarmToAllPartyMembers(party, "파티 후원 중지", content);
         log.info("파티 타입 C로 변경");
     }
 
