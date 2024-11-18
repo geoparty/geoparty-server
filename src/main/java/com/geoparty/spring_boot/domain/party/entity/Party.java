@@ -91,4 +91,8 @@ public class Party extends AuditingFields {
     public void extendPayDate() {
         this.payDate = LocalDate.now().plusDays(3);
     }
+
+    public void updatePayDateToToday() {
+        this.payDate = LocalDate.now();
+    }
 }

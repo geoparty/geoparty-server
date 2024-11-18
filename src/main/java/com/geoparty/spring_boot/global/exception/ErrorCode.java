@@ -19,6 +19,7 @@ public enum ErrorCode {
 
     MEMBER_NOT_FOUND(404, "존재하지 않는 유저입니다."),
     ORGANIZATION_NOT_FOUND(404, "존재하지 않는 환경단체입니다."),
+    USERPARTY_NOT_FOUND(404, "존재하지 않는 유저 혹은 파티입니다."),
     PARTY_NOT_FOUND(404, "존재하지 않는 파티입니다."),
     PARTY_IS_FULL(409, "파티가 가득 찼습니다."),
     USER_ALREADY_IN_PARTY(409, "파티에 이미 존재하는 멤버입니다.");

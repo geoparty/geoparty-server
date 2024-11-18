@@ -85,13 +85,6 @@ public class PartyController {
         return ResponseEntity.status(HttpStatus.CREATED).body("파티에 유저가 추가되었습니다.");
     }
 
-    @PostMapping("/test")
-    @Operation(description = "정기결제일 테스트용")
-    public ResponseEntity<String> forTest() {
-        partyService.checkPayDateAndExecute();
-        return ResponseEntity.status(HttpStatus.CREATED).body("정기결제일 테스트가 완료되었습니다.");
-    }
-
     @GetMapping("/admin")
     @Operation(description = "어드민페이지에서 모든 파티 리스트를 반환한다.")
     public ResponseEntity<List<PartyResponse>> getAllParties() {

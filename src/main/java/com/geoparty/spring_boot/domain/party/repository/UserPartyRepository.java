@@ -8,6 +8,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface UserPartyRepository extends JpaRepository<UserParty, Long> {
     @Query("SELECT up FROM UserParty up " +
@@ -27,4 +28,11 @@ public interface UserPartyRepository extends JpaRepository<UserParty, Long> {
     Integer countUserPartiesByParty(@Param("party") Party party);
 
     boolean existsByMemberAndParty(Member member, Party party);
+
+    @Query("SELECT up FROM UserParty up " +
+            "JOIN FETCH up.party p " +
+            "JOIN FETCH up.member m " +
+            "WHERE m = :member AND p = :party")
+    Optional<UserParty> findUserPartyByMemberAndParty(@Param("member") Member member, @Param("party") Party party);
+
 }

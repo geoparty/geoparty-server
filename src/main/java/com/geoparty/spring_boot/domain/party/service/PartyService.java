@@ -262,4 +262,21 @@ public class PartyService {
     }
 
 
+    @Transactional
+    public void todayIsPayDate(Long partyId) {
+        Party party = partyRepository.findById(partyId)
+                .orElseThrow(() -> new BaseException(ErrorCode.PARTY_NOT_FOUND));
+        party.updatePayDateToToday();
+    }
+
+    @Transactional
+    public void deletePartyMember(Long partyId, Integer memberId) {
+        Party party = partyRepository.findById(partyId)
+                .orElseThrow(() -> new BaseException(ErrorCode.PARTY_NOT_FOUND));
+        Member member = memberRepository.findUserByMemberId(memberId)
+                .orElseThrow(() -> new BaseException(ErrorCode.MEMBER_NOT_FOUND));
+        UserParty userParty = userPartyRepository.findUserPartyByMemberAndParty(member, party)
+                        .orElseThrow(() -> new BaseException(ErrorCode.USERPARTY_NOT_FOUND));
+        userPartyRepository.delete(userParty);
+    }
 }
