@@ -33,8 +33,6 @@ public class AuthController {
 
         String socialAccessToken = accessToken.getAccessToken();// 카카오 엑세스 토큰
 
-        log.info(accessToken.getAccessToken());
-        //유저정보를 받아서 db에 저장
 
         // 카카오 엑세스 토큰으로 로그인 진행 -> 우리 서버의 jwt로 만든다.
         SignInResponse response = authService.signIn(socialAccessToken);

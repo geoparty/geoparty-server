@@ -1,7 +1,7 @@
 package com.geoparty.spring_boot.domain.member.controller;
 
 import com.geoparty.spring_boot.domain.member.dto.MemberResponse;
-import com.geoparty.spring_boot.domain.member.service.MemberServiceImpl;
+import com.geoparty.spring_boot.domain.member.service.MemberService;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -15,7 +15,7 @@ import java.util.List;
 @RequestMapping(value = "/api/members")
 public class MemberController {
 
-    private final MemberServiceImpl memberService;
+    private final MemberService memberService;
     @GetMapping
     @Operation(description = "어드민페이지에서 모든 파티 리스트를 반환한다.")
     public ResponseEntity<List<MemberResponse>> getAllParties() {

@@ -1,8 +1,6 @@
 package com.geoparty.spring_boot.domain.payment.dto.response;
 
-import com.geoparty.spring_boot.domain.party.entity.Party;
 import com.geoparty.spring_boot.domain.payment.entity.Payment;
-import jakarta.persistence.*;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

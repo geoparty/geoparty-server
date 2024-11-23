@@ -12,7 +12,7 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 
 @EnableScheduling
 @SpringBootApplication(exclude = SecurityAutoConfiguration.class)
-@EnableFeignClients(basePackages = "com.geoparty.spring_boot.auth.client")
+@EnableFeignClients
 @ImportAutoConfiguration({FeignAutoConfiguration.class})
 @EnableJpaAuditing
 public class Application {
