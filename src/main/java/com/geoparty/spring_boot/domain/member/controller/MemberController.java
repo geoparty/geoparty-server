@@ -6,9 +6,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -22,5 +20,11 @@ public class MemberController {
     @Operation(description = "어드민페이지에서 모든 파티 리스트를 반환한다.")
     public ResponseEntity<List<MemberResponse>> getAllParties() {
         return ResponseEntity.status(HttpStatus.OK).body(memberService.getAllMembers());
+    }
+
+    @PostMapping("/adminToken")
+    public String getAccessToken(@RequestParam String password) {
+        // 비밀번호 검증 후 토큰을 생성
+        return memberService.generateToken(password);
     }
 }

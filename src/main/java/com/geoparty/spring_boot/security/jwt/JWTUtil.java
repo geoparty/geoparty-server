@@ -37,6 +37,15 @@ public class JWTUtil {
                 .compact();
     }
 
+    public String generateAdminToken(long expiration) {
+        return Jwts.builder()
+                .setHeaderParam(TYPE, JWT_TYPE) // 헤더 설정
+                .setIssuedAt(new Date(System.currentTimeMillis())) // 생성 일시
+                .setExpiration(new Date(System.currentTimeMillis() + expiration)) // 만료 일시
+                .signWith(getSigningKey()) // 비밀키 추가
+                .compact();
+    }
+
 
     // 사용자 정보를 추출한다.
     // jwt에 포함된 Claims을 생성해주는 코드
