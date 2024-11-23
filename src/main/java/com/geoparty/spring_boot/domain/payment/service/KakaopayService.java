@@ -3,6 +3,7 @@ package com.geoparty.spring_boot.domain.payment.service;
 import com.geoparty.spring_boot.domain.payment.client.PayClient;
 import com.geoparty.spring_boot.domain.payment.dto.request.KakaopayApproveRequest;
 import com.geoparty.spring_boot.domain.payment.dto.request.KakaopayReadyRequest;
+import com.geoparty.spring_boot.domain.payment.dto.response.KakaopayApproveResponse;
 import com.geoparty.spring_boot.domain.payment.dto.response.KakaopayReadyResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -18,7 +19,7 @@ public class KakaopayService {
         return payClient.makePayment(request);
     }
 
-    public ResponseEntity<?> sendComplete(KakaopayApproveRequest request) {
+    public ResponseEntity<KakaopayApproveResponse> sendComplete(KakaopayApproveRequest request) {
         return payClient.savePayment(request);
     }
 }
