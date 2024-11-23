@@ -9,6 +9,7 @@ import com.geoparty.spring_boot.global.exception.BaseException;
 import com.geoparty.spring_boot.global.exception.ErrorCode;
 import com.geoparty.spring_boot.security.jwt.JWTUtil;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -20,6 +21,11 @@ import java.util.stream.Collectors;
 public class MemberServiceImpl implements MemberService {
     private final MemberRepository memberRepository;
     private final JWTUtil jwtUtil;
+
+    @Value("${secret.password}")
+    private String SECRET_PASSWORD; // 서버에 저장된 비밀번호
+    private static final int ACCESS_TOKEN_EXPIRATION = 3 * 24 * 60 * 60 * 1000; // 3일
+
 
     @Override
     public MemberResponse getUserInfo(String accessToken) {
@@ -37,4 +43,12 @@ public class MemberServiceImpl implements MemberService {
                 .collect(Collectors.toList());
     }
 
+    public String generateToken(String password) {
+        if (!password.equals(SECRET_PASSWORD)) {
+            throw new IllegalArgumentException("Invalid password"); // 비밀번호가 틀리면 예외 처리
+        }
+
+        // 비밀번호가 맞으면 JWT 토큰 생성
+        return jwtUtil.generateAdminToken(ACCESS_TOKEN_EXPIRATION);
+    }
 }
