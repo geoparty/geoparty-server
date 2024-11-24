@@ -5,12 +5,6 @@ import lombok.*;
 
 import jakarta.persistence.*;
 import org.hibernate.annotations.ColumnDefault;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.userdetails.UserDetails;
-
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Objects;
 
 @Getter
 @ToString(callSuper = true)
@@ -18,7 +12,7 @@ import java.util.Objects;
 public class Member extends AuditingFields {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(nullable = false)
+    @Column(name = "member_id",nullable = false)
     private Integer memberId;
 
     @Setter @Column(length = 100) private String nickname;
