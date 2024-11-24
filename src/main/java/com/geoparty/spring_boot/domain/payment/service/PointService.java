@@ -42,9 +42,9 @@ public class PointService {
                         .quantity("1")
                         .total_amount(String.valueOf(point))
                         .tax_free_amount("0")
-                        .approval_url("https://developers.kakao.com/success")
-                        .cancel_url("https://developers.kakao.com/cancel")
-                        .fail_url("https://developers.kakao.com/fail").build());
+                        .approval_url("geoparty://payment-complete")
+                        .cancel_url("geoparty://payment-complete")
+                        .fail_url("geoparty://payment-complete").build());
         String tid = Objects.requireNonNull(payApprove.getBody()).getTid();
         setOrderTid(orderId, tid);
         String webURL = payApprove.getBody().getNextRedirectMobileUrl();
