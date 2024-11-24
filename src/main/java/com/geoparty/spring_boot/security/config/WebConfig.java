@@ -33,7 +33,7 @@ public class WebConfig implements WebMvcConfigurer {
     @Override
     public void addCorsMappings(CorsRegistry registry){
         registry.addMapping("/**")
-                .allowedOrigins("http://localhost:3000", "https://dogeoparty.duckdns.org")
+                .allowedOrigins("http://localhost:3000", "https://dogeoparty.duckdns.org", "https://d2ahug1uc3qjo6.cloudfront.net")
                 .allowedMethods("OPTIONS", "GET", "POST", "PUT", "DELETE")
                 .allowedHeaders("*")
                 .allowCredentials(true);
