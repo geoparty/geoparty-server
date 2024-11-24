@@ -64,7 +64,7 @@ public class PointService {
                         .pg_token(pgToken)
                         .build());
 
-        if( payComplete.getStatusCode().equals(HttpStatus.OK.value())) {
+        if( payComplete.getStatusCode().equals(HttpStatus.OK)) {
             chargePoint(details,pointLog.getId());
         }
 
