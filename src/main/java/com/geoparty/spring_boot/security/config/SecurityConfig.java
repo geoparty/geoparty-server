@@ -31,6 +31,7 @@ public class SecurityConfig {
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         return http
                 .csrf(AbstractHttpConfigurer::disable) // CSRF 보호를 비활성화
+                .cors(configurer -> configurer.configurationSource(corsConfigurationSource()))
                 .formLogin(AbstractHttpConfigurer::disable) // 폼 기반 로그인을 비활성화한다.
                 .sessionManagement(sessionManagement ->
                         sessionManagement.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
