@@ -55,13 +55,20 @@ public class PartyController {
     public ResponseEntity<List<PartyResponse>> getParties(
             @RequestParam(name = "organization-id", required = false) Long organizationId,
             @RequestParam(name = "party-name", required = false) String partyName){
-
-        if (organizationId != null) {
-            // 특정 환경 단체의 파티 조회
+        if (organizationId != null && partyName != null) {
+            // 환경 단체 ID와 파티 이름 모두 존재하는 경우
+            return ResponseEntity.status(HttpStatus.OK).body(
+                    partyService.getPartiesByOrganizationAndName(organizationId, partyName)
+            );
+        } else if (organizationId != null) {
+            // 환경 단체 ID만 존재하는 경우
             return ResponseEntity.status(HttpStatus.OK).body(partyService.getPartiesByOrganization(organizationId));
-        } else {
-            // 파티 이름에 따른 파티 조회
+        } else if (partyName != null) {
+            // 파티 이름만 존재하는 경우
             return ResponseEntity.status(HttpStatus.OK).body(partyService.getPartiesByName(partyName));
+        } else {
+            // 아무 조건도 없는 경우 모든 파티 반환
+            return ResponseEntity.status(HttpStatus.OK).body(partyService.getAllParties());
         }
     }
 
