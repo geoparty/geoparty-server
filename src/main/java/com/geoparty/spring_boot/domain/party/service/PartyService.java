@@ -279,4 +279,15 @@ public class PartyService {
                         .orElseThrow(() -> new BaseException(ErrorCode.USERPARTY_NOT_FOUND));
         userPartyRepository.delete(userParty);
     }
+
+    public List<PartyResponse> getPartiesByOrganizationAndName(Long organizationId, String partyName) {
+        Organization organization = organizationRepository.findById(organizationId)
+                .orElseThrow(() -> new BaseException(ErrorCode.ORGANIZATION_NOT_FOUND));
+
+        List<Party> parties = partyRepository.findByOrganizationAndTitle(organization, partyName);
+
+        return parties.stream()
+                .map(party -> PartyResponse.from(party, organization))
+                .collect(Collectors.toList());
+    }
 }
