@@ -37,14 +37,22 @@ public class Organization extends AuditingFields {
     @Column(length = 255)
     private String thumbnail;
 
+    @Column
+    private String year;
+
+    @Column
+    private Integer rate;
+
     @Builder
-    public Organization(String title, String summary, String detail, String mainAct, Integer minDonation, String thumbnail) {
+    public Organization(String title, String summary, String detail, String mainAct, Integer minDonation, String thumbnail, String year, Integer rate) {
         this.title = title;
         this.summary = summary;
         this.detail = detail;
         this.mainAct = mainAct;
         this.minDonation = minDonation;
         this.thumbnail = thumbnail;
+        this.year = year;
+        this.rate = rate;
     }
 
 }

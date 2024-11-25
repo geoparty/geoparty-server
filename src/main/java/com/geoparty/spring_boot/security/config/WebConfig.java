@@ -28,6 +28,7 @@ public class WebConfig implements WebMvcConfigurer {
         registry.addInterceptor(authInterceptor)
                 .addPathPatterns("/api/**") // 특정 경로에만 적용
                 .excludePathPatterns("/api/auth/**", "/api/members/**"); // 제외할 경로
+
     }
 
     @Override

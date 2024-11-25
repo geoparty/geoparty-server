@@ -10,6 +10,7 @@ import com.geoparty.spring_boot.domain.organization.entity.Organization;
 import com.geoparty.spring_boot.domain.organization.repository.FileRepository;
 import com.geoparty.spring_boot.domain.organization.repository.ImageRepository;
 import com.geoparty.spring_boot.domain.organization.repository.OrganizationRepository;
+import com.geoparty.spring_boot.domain.party.repository.PartyRepository;
 import com.geoparty.spring_boot.global.exception.ErrorCode;
 import com.geoparty.spring_boot.global.util.AWSS3Util;
 import lombok.RequiredArgsConstructor;
@@ -35,6 +36,7 @@ public class OrgServiceImpl implements OrgService {
     private final AWSS3Util s3Uploader;
     private final ImageRepository imageRepository;
     private final FileRepository fileRepository;
+    private final PartyRepository partyRepository;
 
 
     @Override
@@ -57,7 +59,8 @@ public class OrgServiceImpl implements OrgService {
                 fileUrl = s3Uploader.uploadFile(pdf);
             }
 
-            File file = new File(fileUrl, org);
+            String originalFilename = pdf.getOriginalFilename();
+            File file = new File(fileUrl, originalFilename ,org);
             fileRepository.save(file);
 
             // detailedPhotos 리스트 파일 업로드
@@ -144,9 +147,9 @@ public class OrgServiceImpl implements OrgService {
         }
 
         // 환경 단체 문서
-        String docs = Optional.ofNullable(fileRepository.findByOrganizationId(orgId))
-                .map(Object::toString)
-                .orElse(""); // 문서가 없을 경우 빈 문자열 반환
+        File docs = Optional.ofNullable(fileRepository.findByOrganizationId(orgId)).orElseThrow();
+
+        Integer partyNum = partyRepository.countByOrganizationId(org.getId());
 
         return OrgResponse.builder()
                 .title(org.getTitle())
@@ -155,7 +158,11 @@ public class OrgServiceImpl implements OrgService {
                 .mainAct(org.getMainAct())
                 .minDonation(org.getMinDonation())
                 .photos(photos)
-                .file(docs)
+                .fileName(docs.getFileName())
+                .fileURL(docs.getFileUrl())
+                .partyNum(partyNum)
+                .year(org.getYear())
+                .rate(org.getRate())
                 .build();
     }
 }

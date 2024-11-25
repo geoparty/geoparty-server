@@ -14,14 +14,17 @@ public class File {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    private String fileName;
+
     private String fileUrl;
 
     @ManyToOne
     @JoinColumn(name = "organization_id")
     private Organization organization;
 
-    public File(String fileUrl, Organization organization) {
+    public File(String fileUrl, String fileName , Organization organization) {
         this.fileUrl = fileUrl;
+        this.fileName = fileName;
         this.organization = organization;
     }
 }

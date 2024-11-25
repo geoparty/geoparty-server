@@ -16,7 +16,11 @@ public class OrgResponse {
     private String mainAct;
     private Integer minDonation;
     private List<PhotoDTO> photos;
-    private String file;
+    private String fileName;
+    private String fileURL;
+    private Integer partyNum;
+    private String year;
+    private Integer rate;
 
     @Getter
     @Setter

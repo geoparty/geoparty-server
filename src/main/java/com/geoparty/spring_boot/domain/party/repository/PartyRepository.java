@@ -16,6 +16,7 @@ public interface PartyRepository extends JpaRepository<Party, Long> {
                     "WHERE p.title LIKE %:title%")
     List<Party> findByTitle(@Param("title") String title);
     List<Party> findByPayDate(LocalDate payDate);
+    Integer countByOrganizationId(Long organizationId);
 
     @Query("SELECT p FROM Party p " +
             "JOIN FETCH p.organization o " +
