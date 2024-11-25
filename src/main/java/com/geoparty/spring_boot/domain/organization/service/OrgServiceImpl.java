@@ -10,6 +10,7 @@ import com.geoparty.spring_boot.domain.organization.entity.Organization;
 import com.geoparty.spring_boot.domain.organization.repository.FileRepository;
 import com.geoparty.spring_boot.domain.organization.repository.ImageRepository;
 import com.geoparty.spring_boot.domain.organization.repository.OrganizationRepository;
+import com.geoparty.spring_boot.domain.party.repository.PartyRepository;
 import com.geoparty.spring_boot.global.exception.ErrorCode;
 import com.geoparty.spring_boot.global.util.AWSS3Util;
 import lombok.RequiredArgsConstructor;
@@ -35,6 +36,7 @@ public class OrgServiceImpl implements OrgService {
     private final AWSS3Util s3Uploader;
     private final ImageRepository imageRepository;
     private final FileRepository fileRepository;
+    private final PartyRepository partyRepository;
 
 
     @Override
@@ -147,6 +149,8 @@ public class OrgServiceImpl implements OrgService {
         // 환경 단체 문서
         File docs = Optional.ofNullable(fileRepository.findByOrganizationId(orgId)).orElseThrow();
 
+        Integer partyNum = partyRepository.countByOrganizationId(org.getId());
+
         return OrgResponse.builder()
                 .title(org.getTitle())
                 .summary(org.getSummary())
@@ -156,6 +160,7 @@ public class OrgServiceImpl implements OrgService {
                 .photos(photos)
                 .fileName(docs.getFileName())
                 .fileURL(docs.getFileUrl())
+                .partyNum(partyNum)
                 .year(org.getYear())
                 .rate(org.getRate())
                 .build();

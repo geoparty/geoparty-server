@@ -18,6 +18,7 @@ public class OrgResponse {
     private List<PhotoDTO> photos;
     private String fileName;
     private String fileURL;
+    private Integer partyNum;
     private String year;
     private Integer rate;
 
