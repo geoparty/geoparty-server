@@ -37,6 +37,7 @@ public class SecurityConfig {
                         authorizeHttpRequests
                                 .requestMatchers(CorsUtils::isPreFlightRequest).permitAll() // Preflight 요청 허용
                                 .requestMatchers(new AntPathRequestMatcher("/api/auth/**")).permitAll()
+                                .requestMatchers(new AntPathRequestMatcher("/api/members/adminToken/**")).permitAll()
                                 .requestMatchers(new AntPathRequestMatcher("/error")).permitAll()
                                 //swagger 허용
                                 .requestMatchers("/swagger-ui/**","/swagger-resources/**","/v3/api-docs/**").permitAll()
@@ -44,7 +45,6 @@ public class SecurityConfig {
                                 .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
                                 .requestMatchers(HttpMethod.GET,"/api/auth/refresh").permitAll()
                                 .requestMatchers(HttpMethod.POST, "/api/auth/logout").permitAll()
-                                .requestMatchers(HttpMethod.POST, "/api/members/adminToken").permitAll()
                                 // api 테스트를 위한 임시 허용
 //                                .requestMatchers(HttpMethod.GET,"/api/**").permitAll()
 //                                .requestMatchers(HttpMethod.POST,"/api/**").permitAll()
