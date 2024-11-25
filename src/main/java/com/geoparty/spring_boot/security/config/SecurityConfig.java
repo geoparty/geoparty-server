@@ -36,10 +36,9 @@ public class SecurityConfig {
                 .authorizeHttpRequests(authorizeHttpRequests -> // 설정한 url은 인증없이 접근 가능하다.
                         authorizeHttpRequests
                                 .requestMatchers(CorsUtils::isPreFlightRequest).permitAll() // Preflight 요청 허용
-                                .requestMatchers(HttpMethod.POST, "/api/members/adminToken").permitAll()
-                                .requestMatchers(HttpMethod.POST, "/api/members/adminToken?*").permitAll()
+                                .requestMatchers(HttpMethod.POST, "/api/members/**").permitAll()
                                 .requestMatchers(new AntPathRequestMatcher("/api/auth/**")).permitAll()
-                                .requestMatchers(new AntPathRequestMatcher("/api/members/adminToken/**")).permitAll()
+                                .requestMatchers(new AntPathRequestMatcher("/api/members/**")).permitAll()
                                 .requestMatchers(new AntPathRequestMatcher("/error")).permitAll()
                                 //swagger 허용
                                 .requestMatchers("/swagger-ui/**","/swagger-resources/**","/v3/api-docs/**").permitAll()
