@@ -6,6 +6,7 @@ import com.geoparty.spring_boot.domain.payment.dto.request.KakaopayApproveReques
 import com.geoparty.spring_boot.domain.payment.dto.request.KakaopayReadyRequest;
 import com.geoparty.spring_boot.domain.payment.dto.response.KakaopayApproveResponse;
 import com.geoparty.spring_boot.domain.payment.dto.response.KakaopayReadyResponse;
+import com.geoparty.spring_boot.domain.payment.dto.response.ReadyInfoResponse;
 import com.geoparty.spring_boot.domain.payment.entity.Point;
 import com.geoparty.spring_boot.domain.payment.entity.PointLog;
 import com.geoparty.spring_boot.domain.payment.repository.PointLogRepository;
@@ -30,7 +31,7 @@ public class PointService {
     private final PointRepository pointRepository;
     private final MemberRepository memberRepository;
 
-    public String readyKakao(PrincipalDetails details,Integer point) {
+    public ReadyInfoResponse readyKakao(PrincipalDetails details, Integer point) {
         Integer memberId = details.getMember().getMemberId();
         Long orderId = requestOrderInfo(point, details);
         ResponseEntity<KakaopayReadyResponse> payApprove = kakaopayService.sendApprove(
@@ -42,13 +43,15 @@ public class PointService {
                         .quantity("1")
                         .total_amount(String.valueOf(point))
                         .tax_free_amount("0")
-                        .approval_url("geoparty://payment-complete")
-                        .cancel_url("geoparty://payment-complete")
-                        .fail_url("geoparty://payment-complete").build());
+                        .approval_url("https://dogeoparty.duckdns.org/api/payments/success")
+                        .cancel_url("https://developers.kakao.com/api/payments/cancel")
+                        .fail_url("https://developers.kakao.com/api/payments/fail").build());
         String tid = Objects.requireNonNull(payApprove.getBody()).getTid();
         setOrderTid(orderId, tid);
         String webURL = payApprove.getBody().getNextRedirectMobileUrl();
-        return webURL;
+
+        ReadyInfoResponse response = ReadyInfoResponse.builder().tid(tid).webURL(webURL).build();
+        return response;
     }
 
     public ResponseEntity<KakaopayApproveResponse> completeKakao(PrincipalDetails details, String pgToken, String tid) {
