@@ -12,7 +12,8 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 @Configuration
 @OpenAPIDefinition(
         servers = {
-                @Server(url = "https://dogeoparty.duckdns.org", description = "Default Server URL")
+                @Server(url = "https://dogeoparty.duckdns.org", description = "Default Server URL"),
+                @Server(url = "http://localhost:8080", description = "Local Development Server") // 추가된 로컬 서버 URL
         }
 )
 public class WebConfig implements WebMvcConfigurer {
@@ -32,12 +33,11 @@ public class WebConfig implements WebMvcConfigurer {
     }
 
     @Override
-    public void addCorsMappings(CorsRegistry registry){
+    public void addCorsMappings(CorsRegistry registry) {
         registry.addMapping("/**")
                 .allowedOrigins("http://localhost:3000", "https://dogeoparty.duckdns.org", "https://d2ahug1uc3qjo6.cloudfront.net")
                 .allowedMethods("OPTIONS", "GET", "POST", "PUT", "DELETE")
                 .allowedHeaders("*")
-                .allowCredentials(true);
+                .allowCredentials(true); // 인증 정보 포함을 허용
     }
-
 }

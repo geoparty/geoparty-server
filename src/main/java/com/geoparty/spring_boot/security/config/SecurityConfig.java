@@ -17,6 +17,7 @@ import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.CorsUtils;
 
+import java.util.Arrays;
 import java.util.Collections;
 
 @Configuration
@@ -30,44 +31,38 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         return http
+                .cors(configurer -> configurer.configurationSource(corsConfigurationSource())) // CORS 설정 추가
                 .csrf(AbstractHttpConfigurer::disable) // CSRF 보호를 비활성화
-                .cors(configurer -> configurer.configurationSource(corsConfigurationSource()))
-                .formLogin(AbstractHttpConfigurer::disable) // 폼 기반 로그인을 비활성화한다.
+                .formLogin(AbstractHttpConfigurer::disable) // 폼 기반 로그인을 비활성화
                 .sessionManagement(sessionManagement ->
-                        sessionManagement.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-                ) // 세션 기반 인증을 사용하지 않는다.
+                        sessionManagement.sessionCreationPolicy(SessionCreationPolicy.STATELESS)) // 세션 기반 인증을 사용하지 않음
                 .exceptionHandling(exceptionHandling ->
                         exceptionHandling.authenticationEntryPoint(customJwtAuthenticationEntryPoint)) // 인증 실패 시 customJwtAuthenticationEntryPoint에서 처리
-                .authorizeHttpRequests(authorizeHttpRequests -> // 설정한 url은 인증없이 접근 가능하다.
+                .authorizeHttpRequests(authorizeHttpRequests ->
                         authorizeHttpRequests
                                 .requestMatchers(CorsUtils::isPreFlightRequest).permitAll() // Preflight 요청 허용
                                 .requestMatchers(HttpMethod.POST, "/api/members/**").permitAll()
-                                .requestMatchers(new AntPathRequestMatcher("/api/auth/**")).permitAll()
-                                .requestMatchers(new AntPathRequestMatcher("/api/members/**")).permitAll()
-                                .requestMatchers(new AntPathRequestMatcher("/error")).permitAll()
-                                //swagger 허용
-                                .requestMatchers("/swagger-ui/**","/swagger-resources/**","/v3/api-docs/**").permitAll()
-//                                .requestMatchers(new AntPathRequestMatcher("/oauth/token")).permitAll()
+                                .requestMatchers("/api/auth/**").permitAll()
+                                .requestMatchers("/swagger-ui/**", "/swagger-resources/**", "/v3/api-docs/**").permitAll()
                                 .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
-                                .requestMatchers(HttpMethod.GET,"/api/auth/refresh").permitAll()
+                                .requestMatchers(HttpMethod.GET, "/api/auth/refresh").permitAll()
                                 .requestMatchers(HttpMethod.POST, "/api/auth/logout").permitAll()
-                                // api 테스트를 위한 임시 허용
-                                .requestMatchers(HttpMethod.GET,"/api/**").permitAll()
-                                .requestMatchers(HttpMethod.POST,"/api/**").permitAll()
+                                .requestMatchers(HttpMethod.GET, "/api/**").permitAll()
+                                .requestMatchers(HttpMethod.POST, "/api/**").permitAll()
                                 .anyRequest().authenticated())
-                .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)  // Http 요청이 UsernamePasswordAuthenticationFilter 전에 JwtAuthenticationFilter
+                .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class) // JWT 필터를 UsernamePasswordAuthenticationFilter 전에 추가
                 .build();
     }
 
     CorsConfigurationSource corsConfigurationSource() {
         return request -> {
             CorsConfiguration config = new CorsConfiguration();
-            config.setAllowedHeaders(Collections.singletonList("*"));
-            config.setAllowedMethods(Collections.singletonList("*"));
-            config.setAllowedOriginPatterns(Collections.singletonList("*"));
-            config.setAllowCredentials(true);
-            config.addExposedHeader("Access-Control-Allow-Origin");
-            config.addExposedHeader("Access-Control-Allow-Credentials");
+            config.setAllowedOrigins(Arrays.asList("http://localhost:3000", "https://dogeoparty.duckdns.org", "https://d2ahug1uc3qjo6.cloudfront.net")); // 모든 출처 허용
+            config.setAllowedHeaders(Arrays.asList("Content-Type", "Authorization")); // 허용되는 헤더들
+            config.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS")); // 허용되는 HTTP 메서드들
+            config.setAllowCredentials(true); // 자격 증명 허용
+            config.addExposedHeader("Access-Control-Allow-Origin"); // CORS 허용 헤더 노출
+            config.addExposedHeader("Access-Control-Allow-Credentials"); // CORS 자격증명 허용 헤더 노출
             return config;
         };
     }
