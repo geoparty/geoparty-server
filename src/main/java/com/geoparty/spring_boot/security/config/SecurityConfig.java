@@ -59,7 +59,7 @@ public class SecurityConfig {
             CorsConfiguration config = new CorsConfiguration();
             config.setAllowedOriginPatterns(Collections.singletonList("*"));
             config.setAllowedHeaders(Collections.singletonList("*"));
-            config.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS")); // 허용되는 HTTP 메서드들
+            config.setAllowedMethods(Collections.singletonList("*"));
             config.setAllowCredentials(true); // 자격 증명 허용
             config.addExposedHeader("Access-Control-Allow-Origin"); // CORS 허용 헤더 노출
             config.addExposedHeader("Access-Control-Allow-Credentials"); // CORS 자격증명 허용 헤더 노출
