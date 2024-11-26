@@ -57,8 +57,8 @@ public class SecurityConfig {
     CorsConfigurationSource corsConfigurationSource() {
         return request -> {
             CorsConfiguration config = new CorsConfiguration();
-            config.setAllowedOrigins(Arrays.asList("http://localhost:3000", "https://dogeoparty.duckdns.org", "https://d2ahug1uc3qjo6.cloudfront.net")); // 모든 출처 허용
-            config.setAllowedHeaders(Arrays.asList("Content-Type", "Authorization")); // 허용되는 헤더들
+            config.setAllowedOriginPatterns(Collections.singletonList("*"));
+            config.setAllowedHeaders(Collections.singletonList("*"));
             config.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS")); // 허용되는 HTTP 메서드들
             config.setAllowCredentials(true); // 자격 증명 허용
             config.addExposedHeader("Access-Control-Allow-Origin"); // CORS 허용 헤더 노출
