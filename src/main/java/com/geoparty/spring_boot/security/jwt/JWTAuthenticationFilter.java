@@ -46,6 +46,17 @@ public class JWTAuthenticationFilter extends OncePerRequestFilter {
 //            } else {
 //                log.warn("Token is invalid or empty");
 //            }
+            // 요청 URI 가져오기
+            String requestUri = request.getRequestURI();
+
+            // 특정 경로에 대해 토큰 검증 우회
+            if ("/api/members/adminToken".equals(requestUri)) {
+                log.debug("Skipping token validation for: {}", requestUri);
+                filterChain.doFilter(request, response);
+                return; // 이후 코드는 실행하지 않음
+            }
+
+            // 기존 토큰 처리 로직
             String token = tokenProvider.getAccessTokenFromRequest(request);
             if (StringUtils.hasText(token) && jwtUtil.validateToken(token) == JWTValType.VALID_JWT) {
                 Integer userId = jwtUtil.getUserFromJwt(token);

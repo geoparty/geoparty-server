@@ -19,7 +19,6 @@ public class FirebaseController {
 
     @PutMapping("/targetToken")
     @Operation(description = "fcm token을 업데이트한다.")
-
     public ResponseEntity<String> updateTargetToken(@RequestBody final TargetTokenRequest request) {
         firebaseService.updateTargetToken(request);
         return ResponseEntity.status(HttpStatus.CREATED).body("유저의 fcm token이 업데이트 되었습니다.");
