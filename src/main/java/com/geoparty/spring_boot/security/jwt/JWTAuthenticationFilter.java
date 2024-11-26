@@ -49,6 +49,13 @@ public class JWTAuthenticationFilter extends OncePerRequestFilter {
             // 요청 URI 가져오기
             String requestUri = request.getRequestURI();
 
+            // permitAll 경로는 스킵
+            if (request.getRequestURI().startsWith("/api/") &&
+                    (request.getMethod().equals("GET") || request.getMethod().equals("POST"))) {
+                filterChain.doFilter(request, response);
+                return;
+            }
+
             // 특정 경로에 대해 토큰 검증 우회
             if ("/api/members/adminToken".equals(requestUri)) {
                 log.debug("Skipping token validation for: {}", requestUri);
