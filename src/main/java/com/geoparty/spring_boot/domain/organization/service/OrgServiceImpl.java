@@ -14,6 +14,7 @@ import com.geoparty.spring_boot.domain.party.repository.PartyRepository;
 import com.geoparty.spring_boot.global.exception.ErrorCode;
 import com.geoparty.spring_boot.global.util.AWSS3Util;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -27,6 +28,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 @Transactional
@@ -60,6 +62,7 @@ public class OrgServiceImpl implements OrgService {
             }
 
             String originalFilename = pdf.getOriginalFilename();
+            log.info("File URL length: {}", fileUrl.length());
             File file = new File(fileUrl, originalFilename ,org);
             fileRepository.save(file);
 

@@ -16,6 +16,7 @@ public class File {
 
     private String fileName;
 
+    @Column(columnDefinition = "LONGTEXT")
     private String fileUrl;
 
     @ManyToOne
