@@ -35,17 +35,13 @@ public class JWTAuthenticationFilter extends OncePerRequestFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         try {
-//            val token = tokenProvider.getAccessTokenFromRequest(request);
-//            log.debug("Extracted Token: {}", token);
-//            if (StringUtils.hasText(token) && jwtUtil.validateToken(token) == JWTValType.VALID_JWT) { // null 이 아니고 유효하다면
-//                log.debug("Token is valid");
-//                val authentication = new UserAuthentication(getUserId(token), null, null); // 사용자의 식별자를 추출하지
-//                log.debug("User Authentication: {}", authentication);
-//                authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
-//                SecurityContextHolder.getContext().setAuthentication(authentication);
-//            } else {
-//                log.warn("Token is invalid or empty");
-//            }
+            String method = request.getMethod();
+
+            // OPTIONS 요청은 무조건 통과
+            if ("OPTIONS".equals(method)) {
+                filterChain.doFilter(request, response);
+                return;
+            }
             // 요청 URI 가져오기
             String requestUri = request.getRequestURI();
 
