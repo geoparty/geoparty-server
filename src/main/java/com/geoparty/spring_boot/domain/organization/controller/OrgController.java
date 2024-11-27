@@ -4,8 +4,10 @@ import com.geoparty.spring_boot.domain.organization.dto.request.OrgRequest;
 import com.geoparty.spring_boot.domain.organization.dto.response.OrgListResponse;
 import com.geoparty.spring_boot.domain.organization.dto.response.OrgResponse;
 import com.geoparty.spring_boot.domain.organization.service.OrgService;
+import com.geoparty.spring_boot.domain.organization.service.OrgServiceImpl;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -13,12 +15,13 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
+@Slf4j
 @RestController
 @RequiredArgsConstructor
 @RequestMapping(value = "/api/orgs")
 public class OrgController {
 
-    private final OrgService orgService;
+    private final OrgServiceImpl orgService;
 
     @PostMapping(consumes = "multipart/form-data")
     @Operation(description = "환경단체를 등록한다.")
@@ -40,8 +43,9 @@ public class OrgController {
     @GetMapping("/{orgId}")
     @Operation(description = "환경단체 상세 조회")
     public ResponseEntity<OrgResponse> getOrganization(@PathVariable(value = "orgId") long orgId) {
-        System.out.println(orgId);
+        System.out.println("환경 단체1");
         OrgResponse orgDetail = orgService.getDetail(orgId);
+        System.out.println("환경 단체2");
         return ResponseEntity.status(HttpStatus.OK).body(orgDetail);
     }
 

@@ -27,6 +27,7 @@ import static com.geoparty.spring_boot.security.jwt.JWTValType.VALID_JWT;
 public class AuthService {
     private static final int ACCESS_TOKEN_EXPIRATION = 3 * 24 * 60 * 60 * 1000; // 3일
     private static final int REFRESH_TOKEN_EXPIRATION = 1209600000; // 2주
+    private static final int ADMIN_TOKEN_EXPIRATION = 365 * 24 * 60 * 60;
 
     private final JWTUtil JWTUtil;
     private final MemberRepository memberRepository;
@@ -79,7 +80,7 @@ public class AuthService {
     // 토큰 객체 생성
     private Token generateToken(Authentication authentication) {
         return Token.builder()
-                .accessToken(JWTUtil.generateToken(authentication, ACCESS_TOKEN_EXPIRATION)) // 액세스 토큰 생성
+                .accessToken(JWTUtil.generateToken(authentication, ADMIN_TOKEN_EXPIRATION)) // 액세스 토큰 생성
                 .refreshToken(JWTUtil.generateToken(authentication, REFRESH_TOKEN_EXPIRATION)) // 리프레시 토큰 생성
                 .build();
     }

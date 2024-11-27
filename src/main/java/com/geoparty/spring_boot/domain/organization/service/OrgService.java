@@ -11,7 +11,6 @@ import java.util.List;
 
 public interface OrgService {
     void createOrganization(OrgRequest request, MultipartFile thumbnail, List<MultipartFile> photos, MultipartFile pdf); // 환경 단체 등록
-//    OrgListResponse getOrganizations(OrgListRequest request); // 환경 단체 리스트 조회
 
     OrgResponse getDetail(Long orgId); // 환경 단체 상세 조회
 

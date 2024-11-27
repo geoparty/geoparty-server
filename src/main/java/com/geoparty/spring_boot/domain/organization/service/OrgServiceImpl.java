@@ -1,5 +1,6 @@
 package com.geoparty.spring_boot.domain.organization.service;
 
+import ch.qos.logback.core.net.SyslogOutputStream;
 import com.geoparty.spring_boot.domain.organization.dto.request.OrgListRequest;
 import com.geoparty.spring_boot.domain.organization.dto.request.OrgRequest;
 import com.geoparty.spring_boot.domain.organization.dto.response.OrgListResponse;
@@ -94,31 +95,6 @@ public class OrgServiceImpl implements OrgService {
         }
     }
 
-//    @Override
-//    @Transactional(readOnly = true)
-//    public OrgListResponse getOrganizations(OrgListRequest request) {
-//        OrgListResponse response = null;
-//        try {
-//            Pageable pageable = PageRequest.of(request.getPageNum() - 1, //현재 페이지
-//                    request.getListNum(), // 페이지 당 개수
-//                    request.getDirection()); //내림차순
-//            Page<Organization> result = null;
-//
-//            result = orgRepository.findAll(pageable);
-//
-//            response = OrgListResponse.builder()
-//                    .orgs(result.getContent())
-//                    .pageNum(result.getNumber() + 1)
-//                    .length(result.getNumberOfElements())
-//                    .totalPage(result.getTotalPages())
-//                    .build();
-//
-//        } catch (Exception e) {
-//            throw new BaseException(ErrorCode.BAD_REQUEST);
-//        }
-//        return response;
-//    }
-
     @Override
     @Transactional(readOnly = true)
     public OrgListResponse getOrganizations() {
@@ -150,9 +126,12 @@ public class OrgServiceImpl implements OrgService {
         }
 
         // 환경 단체 문서
-        File docs = Optional.ofNullable(fileRepository.findByOrganizationId(orgId)).orElseThrow();
+        File docs = Optional.ofNullable(fileRepository.findByOrganizationId(orgId))
+                .orElseThrow(()-> new BaseException(ErrorCode.NOT_FOUND_DATA));
 
         Integer partyNum = partyRepository.countByOrganizationId(org.getId());
+
+        System.out.println("partyNum: " + partyNum);
 
         return OrgResponse.builder()
                 .title(org.getTitle())
