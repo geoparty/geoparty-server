@@ -41,7 +41,7 @@ jobs:
           context: .
           file: ./Dockerfile.api
           push: true
-          tags: alpapago77/geoparty-server-api:latest
+          tags: alpapago77/geoparty-api:latest
 
       - name: Build and push Nginx
         uses: docker/build-push-action@v4
@@ -49,7 +49,7 @@ jobs:
           context: .
           file: ./Dockerfile.nginx
           push: true
-          tags: alpapago77/geoparty-server-nginx:latest
+          tags: alpapago77/geoparty-nginx:latest
 
       - name: Deploy to EC2
         uses: appleboy/ssh-action@master
@@ -61,8 +61,8 @@ jobs:
           script: |
             cd ~/geoparty
             docker-compose down
-            docker pull alpapago77/geoparty-server-api:latest
-            docker pull alpapago77/geoparty-server-nginx:latest
+            docker pull alpapago77/geoparty-api:latest
+            docker pull alpapago77/geoparty-nginx:latest
             docker-compose up -d
       - name: Send Discord Notification
         run: |
