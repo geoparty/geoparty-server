@@ -35,22 +35,9 @@ public class JWTAuthenticationFilter extends OncePerRequestFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         try {
-            String method = request.getMethod();
 
-            // OPTIONS 요청은 무조건 통과
-            if ("OPTIONS".equals(method)) {
-                filterChain.doFilter(request, response);
-                return;
-            }
             // 요청 URI 가져오기
             String requestUri = request.getRequestURI();
-
-            // permitAll 경로는 스킵
-            if (request.getRequestURI().startsWith("/api/") &&
-                    (request.getMethod().equals("GET") || request.getMethod().equals("POST"))) {
-                filterChain.doFilter(request, response);
-                return;
-            }
 
             // 특정 경로에 대해 토큰 검증 우회
             if ("/api/members/adminToken".equals(requestUri)) {
