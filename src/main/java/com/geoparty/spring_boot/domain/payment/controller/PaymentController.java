@@ -58,7 +58,7 @@ public class PaymentController {
         response.sendRedirect("geoparty://payment-complete/success?pg_token=" + pgToken);
     };
 
-    
+
     @GetMapping("/{member-id}")
     @Operation(description = "어드민페이지에서 해당 유저의 결제 목록을 반환한다.")
     public ResponseEntity<List<UserPaymentResponse>> getAdminParties(@PathVariable(name = "member-id") Long memberId){
@@ -67,12 +67,12 @@ public class PaymentController {
         return ResponseEntity.status(HttpStatus.OK).body(partyService.getPaymentsByMember(member));
     }
 
-    @GetMapping("/point/{member-id}")
-    @Operation(description = "어드민페이지에서 해당 유저의 포인트 충전 목록을 반환한다.")
-    public ResponseEntity<List<UserPaymentResponse>> getAdminPoints(@PathVariable(name = "member-id") Long memberId){
-        Member member = memberRepository.findUserByMemberId(Math.toIntExact(memberId))
-                .orElseThrow(() -> new BaseException(ErrorCode.MEMBER_NOT_FOUND));
-        return ResponseEntity.status(HttpStatus.OK).body(pointService.getChargePointByMember(member));
-    }
+//    @GetMapping("/point/{member-id}")
+//    @Operation(description = "어드민페이지에서 해당 유저의 포인트 충전 목록을 반환한다.")
+//    public ResponseEntity<List<UserPaymentResponse>> getAdminPoints(@PathVariable(name = "member-id") Long memberId){
+//        Member member = memberRepository.findUserByMemberId(Math.toIntExact(memberId))
+//                .orElseThrow(() -> new BaseException(ErrorCode.MEMBER_NOT_FOUND));
+//        return ResponseEntity.status(HttpStatus.OK).body(pointService.getChargePointByMember(member));
+//    }
   
 }
