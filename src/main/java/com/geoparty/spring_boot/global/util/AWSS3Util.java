@@ -9,9 +9,7 @@ import software.amazon.awssdk.services.s3.S3Client;
 import software.amazon.awssdk.services.s3.model.PutObjectRequest;
 
 import java.io.IOException;
-import java.io.InputStream;
-import java.net.URL;
-import java.util.List;
+import java.util.Base64;
 import java.util.UUID;
 
 @Service
@@ -40,7 +38,8 @@ public class AWSS3Util {
     }
 
     private String createFileName(String originalFileName) {
-        return UUID.randomUUID().toString() + "-" + originalFileName;
+        String encodedFileName = Base64.getUrlEncoder().encodeToString(originalFileName.getBytes());
+        return UUID.randomUUID().toString().substring(0,3) + "-" + encodedFileName;
     }
 
 }

@@ -18,9 +18,6 @@ public class OrgRequest {
     private Integer minDonation;
     private Integer rate;
     private String year;
-//    private MultipartFile thumbnail; // 대표 이미지
-//    private List<MultipartFile> detailedPhotos; // 여러 개의 상세 이미지
-//    private MultipartFile pdfFile; // 단체 상세 pdf
 
     public Organization toEntity(String thumbnail) {
         return Organization.builder()
@@ -30,6 +27,8 @@ public class OrgRequest {
                 .mainAct(mainAct)
                 .minDonation(minDonation)
                 .thumbnail(thumbnail)
+                .rate(rate)
+                .year(year)
                 .build();
     }
 

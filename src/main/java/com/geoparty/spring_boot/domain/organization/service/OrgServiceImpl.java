@@ -51,7 +51,7 @@ public class OrgServiceImpl implements OrgService {
             if (thumbnail != null) {
                 thumbnailUrl = s3Uploader.uploadFile(thumbnail);
             }
-
+    
             // org 생성
             Organization org = request.toEntity(thumbnailUrl);
             orgRepository.save(org);

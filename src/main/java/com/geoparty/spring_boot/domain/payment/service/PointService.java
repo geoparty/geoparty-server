@@ -48,7 +48,7 @@ public class PointService {
                         .fail_url("https://developers.kakao.com/api/payments/fail").build());
         String tid = Objects.requireNonNull(payApprove.getBody()).getTid();
         setOrderTid(orderId, tid);
-        String webURL = payApprove.getBody().getNextRedirectPcUrl();
+        String webURL = payApprove.getBody().getNextRedirectMobileUrl();
 
         ReadyInfoResponse response = ReadyInfoResponse.builder().tid(tid).webURL(webURL).build();
         return response;
