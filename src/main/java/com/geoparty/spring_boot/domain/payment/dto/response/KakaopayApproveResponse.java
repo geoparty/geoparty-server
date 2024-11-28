@@ -27,7 +27,7 @@ public class KakaopayApproveResponse {
     private String itemName;
     private String itemCode;
     private String quantity;
-    private Timestamp createdAt;
-    private Timestamp approvedAt;
+    private String createdAt;
+    private String approvedAt;
     private String payload;
 }

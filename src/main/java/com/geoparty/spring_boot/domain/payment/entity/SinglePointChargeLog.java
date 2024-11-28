@@ -8,7 +8,7 @@ import lombok.*;
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class PointLog extends AuditingFields {
+public class SinglePointChargeLog extends AuditingFields {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -30,7 +30,7 @@ public class PointLog extends AuditingFields {
     @Setter private String tid;
 
     @Builder
-    public PointLog(int point, Member member, String pointLogStatus, String tid) {
+    public SinglePointChargeLog(int point, Member member, String pointLogStatus, String tid) {
         this.point = point;
         this.member = member;
         this.pointLogStatus = pointLogStatus;

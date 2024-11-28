@@ -5,11 +5,10 @@ import com.geoparty.spring_boot.domain.member.repository.MemberRepository;
 import com.geoparty.spring_boot.domain.payment.dto.request.KakaopayApproveRequest;
 import com.geoparty.spring_boot.domain.payment.dto.request.KakaopayReadyRequest;
 import com.geoparty.spring_boot.domain.payment.dto.response.*;
-import com.geoparty.spring_boot.domain.payment.entity.Point;
-import com.geoparty.spring_boot.domain.payment.entity.PointLog;
-import com.geoparty.spring_boot.domain.payment.entity.UserPayment;
-import com.geoparty.spring_boot.domain.payment.repository.PointLogRepository;
-import com.geoparty.spring_boot.domain.payment.repository.PointRepository;
+import com.geoparty.spring_boot.domain.payment.entity.UserPointLog;
+import com.geoparty.spring_boot.domain.payment.entity.SinglePointChargeLog;
+import com.geoparty.spring_boot.domain.payment.repository.SinglePointChargeLogRepository;
+import com.geoparty.spring_boot.domain.payment.repository.UserPointLogRepository;
 import com.geoparty.spring_boot.global.exception.BaseException;
 import com.geoparty.spring_boot.global.exception.ErrorCode;
 import com.geoparty.spring_boot.security.model.PrincipalDetails;
@@ -28,8 +27,8 @@ import java.util.stream.Collectors;
 public class PointService {
 
     private final KakaopayService kakaopayService;
-    private final PointLogRepository pointLogRepository;
-    private final PointRepository pointRepository;
+    private final SinglePointChargeLogRepository singlePointChargeLogRepository;
+    private final UserPointLogRepository userPointLogRepository;
     private final MemberRepository memberRepository;
 
     public ReadyInfoResponse readyKakao(PrincipalDetails details, Integer point) {
@@ -49,7 +48,7 @@ public class PointService {
                         .fail_url("https://developers.kakao.com/api/payments/fail").build());
         String tid = Objects.requireNonNull(payApprove.getBody()).getTid();
         setOrderTid(orderId, tid);
-        String webURL = payApprove.getBody().getNextRedirectMobileUrl();
+        String webURL = payApprove.getBody().getNextRedirectPcUrl();
 
         ReadyInfoResponse response = ReadyInfoResponse.builder().tid(tid).webURL(webURL).build();
         return response;
@@ -57,77 +56,79 @@ public class PointService {
 
     public ResponseEntity<KakaopayApproveResponse> completeKakao(PrincipalDetails details, String pgToken, String tid) {
         Integer memberId = details.getMember().getMemberId();
-        PointLog pointLog = getPointLog(tid);
+        SinglePointChargeLog singlePointChargeLog = getPointLog(tid);
 
         ResponseEntity<KakaopayApproveResponse> payComplete = kakaopayService.sendComplete(
                 KakaopayApproveRequest.builder()
                         .cid("TC0ONETIME")
                         .tid(tid)
-                        .partner_order_id(String.valueOf(pointLog.getId()))
+                        .partner_order_id(String.valueOf(singlePointChargeLog.getId()))
                         .partner_user_id("admin")
                         .pg_token(pgToken)
                         .build());
 
         if( payComplete.getStatusCode().equals(HttpStatus.OK)) {
-            chargePoint(details,pointLog.getId());
+            chargePoint(details, singlePointChargeLog.getId());
         }
-
         return payComplete;
     }
 
     public Long requestOrderInfo(int point, PrincipalDetails details) {
-        PointLog mileageLog = PointLog.builder()
+        SinglePointChargeLog mileageLog = SinglePointChargeLog.builder()
                 .point(point)
                 .member(details.getMember())
                 .pointLogStatus("charge")
                 .build();
 
-        return pointLogRepository.save(mileageLog).getId();
+        return singlePointChargeLogRepository.save(mileageLog).getId();
     }
 
-    public PointLog getPointLog(String tid) {
-        return pointLogRepository.findByTid(tid)
+    public SinglePointChargeLog getPointLog(String tid) {
+        return singlePointChargeLogRepository.findByTid(tid)
                 .orElseThrow(() -> new BaseException(ErrorCode.NOT_FOUND));
     }
 
     @Transactional
     public void setOrderTid(Long orderId, String tid) {
-        PointLog pointLog = pointLogRepository.findById(orderId)
+        SinglePointChargeLog singlePointChargeLog = singlePointChargeLogRepository.findById(orderId)
                 .orElseThrow(() -> new BaseException(ErrorCode.NOT_FOUND));
-        pointLog.setTid(tid);
-        pointLogRepository.save(pointLog);
+        singlePointChargeLog.setTid(tid);
+        singlePointChargeLogRepository.save(singlePointChargeLog);
     }
 
     @Transactional
     public void chargePoint(PrincipalDetails details, Long orderId) {
+        System.out.println("point service chargepoint" + details.getMember().getMemberId());
 
-        PointLog pointLog = pointLogRepository.findById(orderId)
+        SinglePointChargeLog singlePointChargeLog = singlePointChargeLogRepository.findById(orderId)
                 .orElseThrow(() -> new BaseException(ErrorCode.NOT_FOUND));
 
-        Point point = Point.builder()
+        UserPointLog userPointLog = UserPointLog.builder()
                 .member(details.getMember())
                 .pointBefore(details.getMember().getPoint())
-                .pointAfter(details.getMember().getPoint() + pointLog.getPoint())
-                .chargeAmount(pointLog.getPoint())
+                .pointAfter(details.getMember().getPoint() + singlePointChargeLog.getPoint())
+                .chargeAmount(singlePointChargeLog.getPoint())
                 .chargeContent("charge")
                 .build();
 
-        pointRepository.save(point);
+        userPointLogRepository.save(userPointLog);
 
         Member member = memberRepository.findUserByMemberId(details.getMember().getMemberId())
                 .orElseThrow(() -> new BaseException(ErrorCode.NOT_FOUND));
-        member.setPoint(details.getMember().getPoint() + pointLog.getPoint());
+        member.setPoint(details.getMember().getPoint() + singlePointChargeLog.getPoint());
         memberRepository.save(member);
 
-        pointLog.setPointLogStatus("charge complete");
-        pointLogRepository.save(pointLog);
+        singlePointChargeLog.setPointLogStatus("charge complete");
+        singlePointChargeLogRepository.save(singlePointChargeLog);
     }
 
-//    public List<UserPaymentResponse> getPaymentsByMember(Member member) {
-//        List<PointLog> pointLogs = pointLogRepository.findAllByMember(member);
-//        return pointLogs.stream()
-//                .map(payment -> UserPointLogResponse.from(pointLogs, member))
-//                .collect(Collectors.toList());
-//    }
+    public List<UserPointLogResponse> getPointChargeLogByMember(Member member) {
+
+        List<UserPointLog> userPointChargeLogs = userPointLogRepository.findAllByMember(member);
+
+        return userPointChargeLogs.stream()
+                .map( userPointLog-> UserPointLogResponse.from(userPointLog, member))
+                .collect(Collectors.toList());
+    }
 
 }

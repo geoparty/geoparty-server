@@ -2,8 +2,7 @@ package com.geoparty.spring_boot.domain.payment.dto.response;
 
 import com.geoparty.spring_boot.domain.member.dto.MemberResponse;
 import com.geoparty.spring_boot.domain.member.entity.Member;
-import com.geoparty.spring_boot.domain.payment.entity.Point;
-import com.geoparty.spring_boot.domain.payment.entity.UserPayment;
+import com.geoparty.spring_boot.domain.payment.entity.UserPointLog;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -14,7 +13,7 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 public class UserPointLogResponse {
 
-    private Long id;
+    private Long pointChargeid;
     private MemberResponse userData;
     private Integer chargeAmount;
     private Integer beforeCharge;
@@ -22,8 +21,8 @@ public class UserPointLogResponse {
     private LocalDateTime chargeDate;
 
     @Builder
-    public UserPointLogResponse(Long id, MemberResponse userData, Integer chargeAmount, Integer beforeCharge, Integer afterCharge, LocalDateTime chargeDate) {
-        this.id = id;
+    public UserPointLogResponse(Long pointChargeid, MemberResponse userData, Integer chargeAmount, Integer beforeCharge, Integer afterCharge, LocalDateTime chargeDate) {
+        this.pointChargeid = pointChargeid;
         this.userData = userData;
         this.chargeAmount = chargeAmount;
         this.beforeCharge = beforeCharge;
@@ -31,15 +30,15 @@ public class UserPointLogResponse {
         this.chargeDate = chargeDate;
     }
 
-    public static UserPointLogResponse from(Point point , Member member) {
+    public static UserPointLogResponse from(UserPointLog userPointLog, Member member) {
         MemberResponse userData = new MemberResponse().from(member);
         return UserPointLogResponse.builder()
-                .id(point.getPointId())
+                .pointChargeid(userPointLog.getPointId())
                 .userData(userData)
-                .chargeAmount(point.getChargeAmount())
-                .beforeCharge(point.getPointBefore())
-                .afterCharge(point.getPointAfter())
-                .chargeDate(point.getCreatedAt())
+                .chargeAmount(userPointLog.getChargeAmount())
+                .beforeCharge(userPointLog.getPointBefore())
+                .afterCharge(userPointLog.getPointAfter())
+                .chargeDate(userPointLog.getCreatedAt())
                 .build();
     }
 }

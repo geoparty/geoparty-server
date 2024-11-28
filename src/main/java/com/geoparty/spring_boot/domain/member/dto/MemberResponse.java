@@ -16,8 +16,6 @@ public class MemberResponse {
     private String email;
     private String nickName;
     private String thumbnailImageUrl;
-    private LocalDateTime createdAt;
-    private LocalDateTime modifiedAt;
 
 
     @Builder
@@ -26,8 +24,6 @@ public class MemberResponse {
         this.email = email;
         this.nickName = nickName;
         this.thumbnailImageUrl = thumbnailImageUrl;
-        this.createdAt = createdAt;
-        this.modifiedAt = modifiedAt;
     }
 
     @Builder
@@ -37,8 +33,6 @@ public class MemberResponse {
                 .email(entity.getEmail())
                 .nickName(entity.getNickname())
                 .thumbnailImageUrl(entity.getThumbnailImageUrl())
-                .createdAt(entity.getCreatedAt())
-                .modifiedAt(entity.getModifiedAt())
                 .build();
 
     }

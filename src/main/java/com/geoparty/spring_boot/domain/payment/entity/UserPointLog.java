@@ -11,7 +11,7 @@ import lombok.NoArgsConstructor;
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class Point extends AuditingFields {
+public class UserPointLog extends AuditingFields {
 
     @Id
     @GeneratedValue(strategy= GenerationType.IDENTITY)
@@ -35,7 +35,7 @@ public class Point extends AuditingFields {
     private String chargeContent;
 
     @Builder
-    public Point(Member member, int pointBefore, int pointAfter, int chargeAmount, String chargeContent) {
+    public UserPointLog(Member member, int pointBefore, int pointAfter, int chargeAmount, String chargeContent) {
         this.member = member;
         this.pointBefore = pointBefore;
         this.pointAfter = pointAfter;
