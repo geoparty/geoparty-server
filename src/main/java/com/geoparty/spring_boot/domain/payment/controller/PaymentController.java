@@ -42,7 +42,7 @@ public class PaymentController {
 
     @PostMapping("/complete")
     @Operation(description = "카카오 페이 결제 진행")
-    public ResponseEntity<KakaopayApproveResponse> successPay(@AuthenticationPrincipal PrincipalDetails details, @RequestParam("pgToken") String pgToken, @RequestParam("tid") String tid)
+    public ResponseEntity<KakaopayApproveResponse> successPay(@AuthenticationPrincipal PrincipalDetails details, @RequestParam("pg_token") String pgToken, @RequestParam("tid") String tid)
     {
         log.info(details.getMember().toString());
         System.out.println(details.getMember().toString());
@@ -76,5 +76,5 @@ public class PaymentController {
 //                .orElseThrow(() -> new BaseException(ErrorCode.MEMBER_NOT_FOUND));
 //        return ResponseEntity.status(HttpStatus.OK).body(pointService.getChargePointByMember(member));
 //    }
-  
+
 }

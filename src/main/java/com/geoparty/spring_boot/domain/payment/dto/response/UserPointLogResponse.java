@@ -31,13 +31,15 @@ public class UserPointLogResponse {
         this.chargeDate = chargeDate;
     }
 
-//    public static UserPointLogResponse from(Point point){
-//        return UserPointLogResponse.builder()
-//                .id(userPayment.getId())
-//                .memberId(userPayment.getMember().getMemberId())
-//                .partyName(userPayment.getParty().getTitle())
-//                .amount(userPayment.getAmount())
-//                .date(userPayment.getCreatedAt())
-//                .build();
-//    }
+    public static UserPointLogResponse from(Point point , Member member) {
+        MemberResponse userData = new MemberResponse().from(member);
+        return UserPointLogResponse.builder()
+                .id(point.getPointId())
+                .userData(userData)
+                .chargeAmount(point.getChargeAmount())
+                .beforeCharge(point.getPointBefore())
+                .afterCharge(point.getPointAfter())
+                .chargeDate(point.getCreatedAt())
+                .build();
+    }
 }

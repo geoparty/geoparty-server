@@ -4,10 +4,7 @@ import com.geoparty.spring_boot.domain.member.entity.Member;
 import com.geoparty.spring_boot.domain.member.repository.MemberRepository;
 import com.geoparty.spring_boot.domain.payment.dto.request.KakaopayApproveRequest;
 import com.geoparty.spring_boot.domain.payment.dto.request.KakaopayReadyRequest;
-import com.geoparty.spring_boot.domain.payment.dto.response.KakaopayApproveResponse;
-import com.geoparty.spring_boot.domain.payment.dto.response.KakaopayReadyResponse;
-import com.geoparty.spring_boot.domain.payment.dto.response.ReadyInfoResponse;
-import com.geoparty.spring_boot.domain.payment.dto.response.UserPaymentResponse;
+import com.geoparty.spring_boot.domain.payment.dto.response.*;
 import com.geoparty.spring_boot.domain.payment.entity.Point;
 import com.geoparty.spring_boot.domain.payment.entity.PointLog;
 import com.geoparty.spring_boot.domain.payment.entity.UserPayment;
@@ -42,7 +39,7 @@ public class PointService {
                 KakaopayReadyRequest.builder()
                         .cid("TC0ONETIME")
                         .partner_order_id(String.valueOf(orderId))
-                        .partner_user_id(String.valueOf(memberId))
+                        .partner_user_id("admin")
                         .item_name("point")
                         .quantity("1")
                         .total_amount(String.valueOf(point))
@@ -67,7 +64,7 @@ public class PointService {
                         .cid("TC0ONETIME")
                         .tid(tid)
                         .partner_order_id(String.valueOf(pointLog.getId()))
-                        .partner_user_id(String.valueOf(memberId))
+                        .partner_user_id("admin")
                         .pg_token(pgToken)
                         .build());
 
@@ -129,7 +126,7 @@ public class PointService {
 //    public List<UserPaymentResponse> getPaymentsByMember(Member member) {
 //        List<PointLog> pointLogs = pointLogRepository.findAllByMember(member);
 //        return pointLogs.stream()
-//                .map(payment -> UserPointLogResponse.from(pointLogs))
+//                .map(payment -> UserPointLogResponse.from(pointLogs, member))
 //                .collect(Collectors.toList());
 //    }
 
