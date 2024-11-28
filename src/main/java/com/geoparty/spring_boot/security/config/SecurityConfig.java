@@ -31,8 +31,8 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         return http
-//                .cors(configurer -> configurer.configurationSource(corsConfigurationSource())) // CORS 설정 추가
-                .cors(AbstractHttpConfigurer::disable)
+                .cors(configurer -> configurer.configurationSource(corsConfigurationSource())) // CORS 설정 추가
+//                .cors(AbstractHttpConfigurer::disable)
                 .csrf(AbstractHttpConfigurer::disable) // CSRF 보호를 비활성화
                 .formLogin(AbstractHttpConfigurer::disable) // 폼 기반 로그인을 비활성화
                 .sessionManagement(sessionManagement ->
@@ -55,16 +55,16 @@ public class SecurityConfig {
                 .build();
     }
 
-//    CorsConfigurationSource corsConfigurationSource() {
-//        return request -> {
-//            CorsConfiguration config = new CorsConfiguration();
-//            config.setAllowedOriginPatterns(Collections.singletonList("*"));
-//            config.setAllowedHeaders(Collections.singletonList("*"));
-//            config.setAllowedMethods(Collections.singletonList("*"));
-//            config.setAllowCredentials(true); // 자격 증명 허용
-//            config.addExposedHeader("Access-Control-Allow-Origin"); // CORS 허용 헤더 노출
-//            config.addExposedHeader("Access-Control-Allow-Credentials"); // CORS 자격증명 허용 헤더 노출
-//            return config;
-//        };
-//    }
+    CorsConfigurationSource corsConfigurationSource() {
+        return request -> {
+            CorsConfiguration config = new CorsConfiguration();
+            config.setAllowedOriginPatterns(Collections.singletonList("*"));
+            config.setAllowedHeaders(Collections.singletonList("*"));
+            config.setAllowedMethods(Collections.singletonList("*"));
+            config.setAllowCredentials(true); // 자격 증명 허용
+            config.addExposedHeader("Access-Control-Allow-Origin"); // CORS 허용 헤더 노출
+            config.addExposedHeader("Access-Control-Allow-Credentials"); // CORS 자격증명 허용 헤더 노출
+            return config;
+        };
+    }
 }
