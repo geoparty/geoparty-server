@@ -32,7 +32,7 @@ public class PaymentController {
     private final PartyService partyService;
     private final PointService pointService;
 
-    @PostMapping("/")
+    @PostMapping
     @Operation(description = "카카오 페이 결제 준비.")
     public ResponseEntity<ReadyInfoResponse> readyPay(
             @AuthenticationPrincipal final PrincipalDetails details, @RequestParam final Integer point) {
