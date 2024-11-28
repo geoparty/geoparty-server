@@ -41,15 +41,9 @@ public class SecurityConfig {
                         exceptionHandling.authenticationEntryPoint(customJwtAuthenticationEntryPoint)) // 인증 실패 시 customJwtAuthenticationEntryPoint에서 처리
                 .authorizeHttpRequests(authorizeHttpRequests ->
                         authorizeHttpRequests
-                                .requestMatchers(CorsUtils::isPreFlightRequest).permitAll() // Preflight 요청 허용
-                                .requestMatchers(HttpMethod.POST, "/api/members/**").permitAll()
-                                .requestMatchers("/api/auth/**").permitAll()
+//                                .requestMatchers(CorsUtils::isPreFlightRequest).permitAll() // Preflight 요청 허용 중복이라 소거
                                 .requestMatchers("/swagger-ui/**", "/swagger-resources/**", "/v3/api-docs/**").permitAll()
-                                .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
-                                .requestMatchers(HttpMethod.GET, "/api/auth/refresh").permitAll()
-                                .requestMatchers(HttpMethod.POST, "/api/auth/logout").permitAll()
-                                .requestMatchers(HttpMethod.GET, "/api/**").permitAll()
-                                .requestMatchers(HttpMethod.POST, "/api/**").permitAll()
+                                .requestMatchers("/api/auth/**").permitAll()
                                 .anyRequest().authenticated())
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class) // JWT 필터를 UsernamePasswordAuthenticationFilter 전에 추가
                 .build();
