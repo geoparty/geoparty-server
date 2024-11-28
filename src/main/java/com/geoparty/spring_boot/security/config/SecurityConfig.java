@@ -41,7 +41,7 @@ public class SecurityConfig {
                         exceptionHandling.authenticationEntryPoint(customJwtAuthenticationEntryPoint)) // 인증 실패 시 customJwtAuthenticationEntryPoint에서 처리
                 .authorizeHttpRequests(authorizeHttpRequests ->
                         authorizeHttpRequests
-//                                .requestMatchers(CorsUtils::isPreFlightRequest).permitAll() // Preflight 요청 허용 중복이라 소거
+                                .requestMatchers("/api/payments/success").permitAll()
                                 .requestMatchers("/swagger-ui/**", "/swagger-resources/**", "/v3/api-docs/**").permitAll()
                                 .requestMatchers("/api/auth/**").permitAll()
                                 .anyRequest().authenticated())
