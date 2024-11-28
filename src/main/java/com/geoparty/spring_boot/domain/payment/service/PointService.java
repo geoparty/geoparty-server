@@ -7,8 +7,10 @@ import com.geoparty.spring_boot.domain.payment.dto.request.KakaopayReadyRequest;
 import com.geoparty.spring_boot.domain.payment.dto.response.KakaopayApproveResponse;
 import com.geoparty.spring_boot.domain.payment.dto.response.KakaopayReadyResponse;
 import com.geoparty.spring_boot.domain.payment.dto.response.ReadyInfoResponse;
+import com.geoparty.spring_boot.domain.payment.dto.response.UserPaymentResponse;
 import com.geoparty.spring_boot.domain.payment.entity.Point;
 import com.geoparty.spring_boot.domain.payment.entity.PointLog;
+import com.geoparty.spring_boot.domain.payment.entity.UserPayment;
 import com.geoparty.spring_boot.domain.payment.repository.PointLogRepository;
 import com.geoparty.spring_boot.domain.payment.repository.PointRepository;
 import com.geoparty.spring_boot.global.exception.BaseException;
@@ -20,7 +22,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -62,7 +66,7 @@ public class PointService {
                 KakaopayApproveRequest.builder()
                         .cid("TC0ONETIME")
                         .tid(tid)
-                        .partner_order_id(String.valueOf(pointLog.getTid()))
+                        .partner_order_id(String.valueOf(pointLog.getId()))
                         .partner_user_id(String.valueOf(memberId))
                         .pg_token(pgToken)
                         .build());
@@ -121,5 +125,12 @@ public class PointService {
         pointLog.setPointLogStatus("charge complete");
         pointLogRepository.save(pointLog);
     }
+
+//    public List<UserPaymentResponse> getPaymentsByMember(Member member) {
+//        List<PointLog> pointLogs = pointLogRepository.findAllByMember(member);
+//        return pointLogs.stream()
+//                .map(payment -> UserPointLogResponse.from(pointLogs))
+//                .collect(Collectors.toList());
+//    }
 
 }
