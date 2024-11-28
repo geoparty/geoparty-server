@@ -16,6 +16,8 @@ public class OrgRequest {
     private String detail;
     private String mainAct;
     private Integer minDonation;
+    private Integer rate;
+    private String year;
 //    private MultipartFile thumbnail; // 대표 이미지
 //    private List<MultipartFile> detailedPhotos; // 여러 개의 상세 이미지
 //    private MultipartFile pdfFile; // 단체 상세 pdf
