@@ -47,7 +47,7 @@ public class PaymentController {
     {
 
         ResponseEntity<KakaopayApproveResponse> sendData = pointService.completeKakao(details, pgToken, tid);
-
+        log.info("complete controller test"+sendData.getBody().toString());
         return sendData;
     }
 

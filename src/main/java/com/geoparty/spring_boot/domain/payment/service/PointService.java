@@ -14,6 +14,7 @@ import com.geoparty.spring_boot.global.exception.ErrorCode;
 import com.geoparty.spring_boot.security.model.PrincipalDetails;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -22,6 +23,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class PointService {
@@ -58,6 +60,8 @@ public class PointService {
         Integer memberId = details.getMember().getMemberId();
         SinglePointChargeLog singlePointChargeLog = getPointLog(tid);
 
+        log.info("log 1) point service 부분 :" + singlePointChargeLog.toString());
+
         ResponseEntity<KakaopayApproveResponse> payComplete = kakaopayService.sendComplete(
                 KakaopayApproveRequest.builder()
                         .cid("TC0ONETIME")
@@ -66,6 +70,7 @@ public class PointService {
                         .partner_user_id("admin")
                         .pg_token(pgToken)
                         .build());
+        log.info("log 2) point service 부분 :" +payComplete.toString());
 
         if( payComplete.getStatusCode().equals(HttpStatus.OK)) {
             chargePoint(details, singlePointChargeLog.getId());
