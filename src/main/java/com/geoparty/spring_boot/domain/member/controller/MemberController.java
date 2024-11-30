@@ -12,17 +12,16 @@ import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping(value = "/api/members")
 public class MemberController {
 
     private final MemberService memberService;
-    @GetMapping
+    @GetMapping("/api/members")
     @Operation(description = "어드민페이지에서 모든 파티 리스트를 반환한다.")
     public ResponseEntity<List<MemberResponse>> getAllParties() {
         return ResponseEntity.status(HttpStatus.OK).body(memberService.getAllMembers());
     }
 
-    @PostMapping("/adminToken")
+    @PostMapping("/api/adminToken")
     public String getAccessToken(@RequestParam String password) {
         // 비밀번호 검증 후 토큰을 생성
         return memberService.generateToken(password);

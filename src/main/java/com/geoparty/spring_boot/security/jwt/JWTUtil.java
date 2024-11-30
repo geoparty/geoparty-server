@@ -9,7 +9,10 @@ import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Component;
 
 import javax.crypto.SecretKey;
+import java.time.Instant;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Optional;
 
 import static java.util.Base64.getEncoder;
@@ -37,15 +40,20 @@ public class JWTUtil {
                 .compact();
     }
 
-    public String generateAdminToken(long expiration) {
+    public String generateAdminToken() {
+        Claims claims = Jwts.claims();
+        claims.put("role", "admin"); // 역할(role) 등을 클레임에 저장
+
+        long expirationTime = 7 * 24 * 60 * 60 * 1000; // 7일 (밀리초 단위)
+
         return Jwts.builder()
                 .setHeaderParam(TYPE, JWT_TYPE) // 헤더 설정
-                .setIssuedAt(new Date(System.currentTimeMillis())) // 생성 일시
-                .setExpiration(new Date(System.currentTimeMillis() + expiration)) // 만료 일시
+                .setClaims(claims)
+                .setIssuedAt(Date.from(Instant.now())) // UTC 기준 발급 일시
+                .setExpiration(Date.from(Instant.now().plusMillis(expirationTime))) // 7일 후 만료 일시
                 .signWith(getSigningKey()) // 비밀키 추가
                 .compact();
     }
-
 
     // 사용자 정보를 추출한다.
     // jwt에 포함된 Claims을 생성해주는 코드
