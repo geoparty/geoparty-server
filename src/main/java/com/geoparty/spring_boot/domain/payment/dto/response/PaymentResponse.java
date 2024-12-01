@@ -16,14 +16,16 @@ public class PaymentResponse {
     private Integer amount;
     private LocalDateTime date;
     private boolean mailed;
+    private boolean completed;
 
     @Builder
-    public PaymentResponse(Long id, Long partyId, Integer amount, LocalDateTime date, boolean mailed) {
+    public PaymentResponse(Long id, Long partyId, Integer amount, LocalDateTime date, boolean mailed, boolean completed) {
         this.id = id;
         this.partyId = partyId;
         this.amount = amount;
         this.date = date;
         this.mailed = mailed;
+        this.completed = completed;
     }
 
     public static PaymentResponse from(Payment payment){
@@ -32,6 +34,8 @@ public class PaymentResponse {
                 .partyId(payment.getParty().getId())
                 .amount(payment.getAmount())
                 .date(payment.getCreatedAt())
+                .mailed(payment.isMailed())
+                .completed(payment.isCompleted())
                 .build();
     }
 }

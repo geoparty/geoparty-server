@@ -1,6 +1,7 @@
 package com.geoparty.spring_boot.domain.payment.entity;
 
 import com.geoparty.spring_boot.domain.party.entity.Party;
+import com.geoparty.spring_boot.domain.party.entity.PartyType;
 import com.geoparty.spring_boot.global.domain.AuditingFields;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
@@ -27,10 +28,22 @@ public class Payment extends AuditingFields {
     @Column(nullable = false)
     private boolean mailed;
 
+    @Column(nullable = false)
+    private boolean completed;
+
     @Builder
-    public Payment(Party party, Integer amount, boolean mailed) {
+    public Payment(Party party, Integer amount, boolean mailed, boolean completed) {
         this.party = party;
         this.amount = amount;
         this.mailed = false;
+        this.completed = false;
+    }
+
+    public void updateMailed() {
+        this.mailed = !this.isMailed();
+    }
+
+    public void updateCompleted() {
+        this.completed = !this.isCompleted();
     }
 }

@@ -2,11 +2,9 @@ package com.geoparty.spring_boot.domain.payment.controller;
 
 import com.geoparty.spring_boot.domain.member.entity.Member;
 import com.geoparty.spring_boot.domain.member.repository.MemberRepository;
+import com.geoparty.spring_boot.domain.party.dto.response.PartyDetailResponse;
 import com.geoparty.spring_boot.domain.party.service.PartyService;
-import com.geoparty.spring_boot.domain.payment.dto.response.KakaopayApproveResponse;
-import com.geoparty.spring_boot.domain.payment.dto.response.ReadyInfoResponse;
-import com.geoparty.spring_boot.domain.payment.dto.response.UserPaymentResponse;
-import com.geoparty.spring_boot.domain.payment.dto.response.UserPointLogResponse;
+import com.geoparty.spring_boot.domain.payment.dto.response.*;
 import com.geoparty.spring_boot.domain.payment.service.PointService;
 import com.geoparty.spring_boot.global.exception.BaseException;
 import com.geoparty.spring_boot.global.exception.ErrorCode;
@@ -74,6 +72,26 @@ public class PaymentController {
         Member member = memberRepository.findUserByMemberId(Math.toIntExact(memberId))
                 .orElseThrow(() -> new BaseException(ErrorCode.MEMBER_NOT_FOUND));
         return ResponseEntity.status(HttpStatus.OK).body(pointService.getPointChargeLogByMember(member));
+    }
+
+    @GetMapping
+    @Operation(description = "모든 파티의 후원 내역을 반환한다.")
+    public ResponseEntity<List<PaymentResponse>> getAllPayments() {
+        return ResponseEntity.status(HttpStatus.OK).body(partyService.toAllPaymentResponse());
+    }
+
+    @PutMapping("/{payment-id}/complete")
+    @Operation(description = "특정 후원 내역의 후원 처리 여부를 업데이트한다.")
+    public ResponseEntity<String> updatePaymentCompleted(@PathVariable(name = "payment-id") Long paymentId) {
+        partyService.updatePaymentCompleted(paymentId);
+        return ResponseEntity.status(HttpStatus.OK).body("후원 처리 여부가 업데이트 되었습니다.");
+    }
+
+    @PutMapping("/{payment-id}/mail")
+    @Operation(description = "특정 후원 내역의 메일 처리 여부를 업데이트한다.")
+    public ResponseEntity<String> updatePaymentMailed(@PathVariable(name = "payment-id") Long paymentId) {
+        partyService.updatePaymentMailed(paymentId);
+        return ResponseEntity.status(HttpStatus.OK).body("메일 처리 여부가 업데이트 되었습니다.");
     }
 
 }

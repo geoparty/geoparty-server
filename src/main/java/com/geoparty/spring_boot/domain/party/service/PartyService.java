@@ -254,6 +254,13 @@ public class PartyService {
                 .collect(Collectors.toList());
     }
 
+    public List<PaymentResponse> toAllPaymentResponse() {
+        List<Payment> payments = paymentRepository.findAll();
+        return payments.stream()
+                .map(payment -> PaymentResponse.from(payment))
+                .collect(Collectors.toList());
+    }
+
     public List<UserPaymentResponse> getPaymentsByMember(Member member) {
         List<UserPayment> payments = userPaymentRepository.findAllByMember(member);
         return payments.stream()
@@ -289,5 +296,19 @@ public class PartyService {
         return parties.stream()
                 .map(party -> PartyResponse.from(party, organization))
                 .collect(Collectors.toList());
+    }
+
+    @Transactional
+    public void updatePaymentCompleted(Long paymentId) {
+        Payment payment = paymentRepository.findById(paymentId)
+                .orElseThrow(() -> new BaseException(ErrorCode.PAYMENT_NOT_FOUND));
+        payment.updateCompleted();
+    }
+
+    @Transactional
+    public void updatePaymentMailed(Long paymentId) {
+        Payment payment = paymentRepository.findById(paymentId)
+                .orElseThrow(() -> new BaseException(ErrorCode.PAYMENT_NOT_FOUND));
+        payment.updateMailed();
     }
 }
