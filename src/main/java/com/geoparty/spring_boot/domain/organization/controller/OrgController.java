@@ -1,9 +1,8 @@
 package com.geoparty.spring_boot.domain.organization.controller;
 
 import com.geoparty.spring_boot.domain.organization.dto.request.OrgRequest;
-import com.geoparty.spring_boot.domain.organization.dto.response.OrgListResponse;
+import com.geoparty.spring_boot.domain.organization.dto.response.OrgDTO;
 import com.geoparty.spring_boot.domain.organization.dto.response.OrgResponse;
-import com.geoparty.spring_boot.domain.organization.service.OrgService;
 import com.geoparty.spring_boot.domain.organization.service.OrgServiceImpl;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
@@ -35,17 +34,17 @@ public class OrgController {
 
     @GetMapping
     @Operation(description = "환경단체 목록을 조회한다.")
-    public ResponseEntity<OrgListResponse> getOrganizations() {
-        OrgListResponse orgs = orgService.getOrganizations();
+    public ResponseEntity<List<OrgDTO>> getOrganizations() {
+        List<OrgDTO> orgs = orgService.getOrganizations();
         return ResponseEntity.status(HttpStatus.OK).body(orgs);
     }
 
     @GetMapping("/{orgId}")
     @Operation(description = "환경단체 상세 조회")
     public ResponseEntity<OrgResponse> getOrganization(@PathVariable(value = "orgId") long orgId) {
-        System.out.println("환경 단체1");
+
         OrgResponse orgDetail = orgService.getDetail(orgId);
-        System.out.println("환경 단체2");
+
         return ResponseEntity.status(HttpStatus.OK).body(orgDetail);
     }
 

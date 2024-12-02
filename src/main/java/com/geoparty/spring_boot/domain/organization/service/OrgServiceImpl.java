@@ -1,9 +1,7 @@
 package com.geoparty.spring_boot.domain.organization.service;
 
-import ch.qos.logback.core.net.SyslogOutputStream;
-import com.geoparty.spring_boot.domain.organization.dto.request.OrgListRequest;
 import com.geoparty.spring_boot.domain.organization.dto.request.OrgRequest;
-import com.geoparty.spring_boot.domain.organization.dto.response.OrgListResponse;
+import com.geoparty.spring_boot.domain.organization.dto.response.OrgDTO;
 import com.geoparty.spring_boot.domain.organization.dto.response.OrgResponse;
 import com.geoparty.spring_boot.domain.organization.entity.File;
 import com.geoparty.spring_boot.domain.organization.entity.Image;
@@ -16,9 +14,6 @@ import com.geoparty.spring_boot.global.exception.ErrorCode;
 import com.geoparty.spring_boot.global.util.AWSS3Util;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import com.geoparty.spring_boot.global.exception.BaseException;
@@ -97,12 +92,21 @@ public class OrgServiceImpl implements OrgService {
 
     @Override
     @Transactional(readOnly = true)
-    public OrgListResponse getOrganizations() {
+    public List<OrgDTO> getOrganizations() {
         List<Organization> orgs = orgRepository.findAll();
+        List<OrgDTO> dtos = new ArrayList<>();
+        for (Organization org : orgs) {
+            int partyNum = partyRepository.countByOrganizationId(org.getId());
+            OrgDTO orgDTO = OrgDTO.builder()
+                            .orgId(org.getId())
+                            .orgTitle(org.getTitle())
+                            .orgSummary(org.getSummary())
+                            .partyNum(partyNum)
+                            .build();
+            dtos.add(orgDTO);
+        }
 
-        return OrgListResponse.builder()
-                .orgs(orgs)
-                .build();
+        return dtos;
     }
 
     @Override

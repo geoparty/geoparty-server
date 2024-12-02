@@ -1,8 +1,7 @@
 package com.geoparty.spring_boot.domain.organization.service;
 
-import com.geoparty.spring_boot.domain.organization.dto.request.OrgListRequest;
 import com.geoparty.spring_boot.domain.organization.dto.request.OrgRequest;
-import com.geoparty.spring_boot.domain.organization.dto.response.OrgListResponse;
+import com.geoparty.spring_boot.domain.organization.dto.response.OrgDTO;
 import com.geoparty.spring_boot.domain.organization.dto.response.OrgResponse;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -14,6 +13,6 @@ public interface OrgService {
 
     OrgResponse getDetail(Long orgId); // 환경 단체 상세 조회
 
-    OrgListResponse getOrganizations();
+    List<OrgDTO> getOrganizations();
 
 }
