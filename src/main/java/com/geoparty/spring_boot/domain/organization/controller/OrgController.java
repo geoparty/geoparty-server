@@ -2,6 +2,7 @@ package com.geoparty.spring_boot.domain.organization.controller;
 
 import com.geoparty.spring_boot.domain.organization.dto.request.OrgRequest;
 import com.geoparty.spring_boot.domain.organization.dto.response.OrgDTO;
+import com.geoparty.spring_boot.domain.organization.dto.response.OrgListResponse;
 import com.geoparty.spring_boot.domain.organization.dto.response.OrgResponse;
 import com.geoparty.spring_boot.domain.organization.service.OrgServiceImpl;
 import io.swagger.v3.oas.annotations.Operation;
@@ -34,9 +35,12 @@ public class OrgController {
 
     @GetMapping
     @Operation(description = "환경단체 목록을 조회한다.")
-    public ResponseEntity<List<OrgDTO>> getOrganizations() {
+    public ResponseEntity<OrgListResponse> getOrganizations() {
         List<OrgDTO> orgs = orgService.getOrganizations();
-        return ResponseEntity.status(HttpStatus.OK).body(orgs);
+        OrgListResponse response = OrgListResponse.builder()
+                .orgs(orgs)
+                .build();
+        return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 
     @GetMapping("/{orgId}")
