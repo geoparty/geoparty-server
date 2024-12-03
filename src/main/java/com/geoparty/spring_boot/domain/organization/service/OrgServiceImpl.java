@@ -100,6 +100,7 @@ public class OrgServiceImpl implements OrgService {
             OrgDTO orgDTO = OrgDTO.builder()
                             .orgId(org.getId())
                             .orgTitle(org.getTitle())
+                            .thumbnail(org.getThumbnail())
                             .orgSummary(org.getSummary())
                             .partyNum(partyNum)
                             .build();
